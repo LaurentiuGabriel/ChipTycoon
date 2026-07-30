@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Factory Tour - ChipTycoon</title>
+<meta name="description" content="Twenty simple steps from a bucket of sand to a finished computer chip, drawn in classic tycoon game style.">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%232f3945'/%3E%3Crect x='9' y='9' width='14' height='14' rx='2' fill='%233fb5a0'/%3E%3C/svg%3E">
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="toolbar-in">
+    <a class="logo" href="index.html">Chip<span>Tycoon</span></a>
+    <a class="btn" href="index.html">Park</a>
+    <a class="btn on" href="tour.html">The Tour</a>
+    <a class="btn" href="glossary.html">Word Book</a>
+    <a class="btn gold" href="game.html">Play</a>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <h1>The Factory Tour</h1>
+  <p class="subtitle">Twenty stops, from a pile of sand to a chip in your pocket</p>
+
+  <div class="win">
+    <div class="win-title"><span class="knob"></span>Tour Rules</div>
+    <div class="win-body">
+      <p style="margin-bottom:0">
+        Read it top to bottom like a ride queue. Each stop has one big idea, three short notes,
+        and a tip from your park manager. Nothing here needs any science background.
+        If you can follow a cake recipe, you can follow this.
+      </p>
+    </div>
+  </div>
+
+  <!-- =============== ACT 1 =============== -->
+  <div class="act"><span class="k">ACT 1 &middot; SAND TO WAFER</span></div>
+
+  <!-- 1 -->
+  <div class="win stage" id="s1">
+    <div class="win-title"><span class="knob"></span>Stop 1 of 20 &middot; Sand Pit</div>
+    <div class="win-body">
+      <div class="stage-head"><div class="stage-num">1</div><h2>Dig up the sand <span class="tag act1">raw material</span></h2></div>
+      <div class="stage-grid">
+        <div class="plate" data-scene="sand"></div>
+        <div>
+          <p class="what">A chip starts life as ordinary sand.</p>
+          <ul class="simple">
+            <li>Not beach sand. Factories want <b>quartz sand</b>, which is very high in a mineral called silica.</li>
+            <li>Silica is silicon glued to oxygen. Roughly a quarter of the whole Earth's crust is silicon, so we will never run out.</li>
+            <li>The best quartz comes from a few special mines. It is white, glassy and already quite clean before we touch it.</li>
+          </ul>
+          <div class="tip"><b>Tycoon tip:</b> sand is the cheapest thing in this entire park. Almost none of a chip's price is the raw material. You are paying for the next nineteen buildings.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2 -->
+  <div class="win stage" id="s2">
+    <div class="win-title"><span class="knob"></span>Stop 2 of 20 &middot; Furnace</div>
+    <div class="win-body">
+      <div class="stage-head"><div class="stage-num">2</div><h2>Cook the oxygen off <span class="tag act1">raw material</span></h2></div>
+      <div class="stage-grid">
+        <div class="plate" data-scene="furnace"></div>
+        <div>
+          <p class="what">Heat sand with carbon and you are left with rough silicon.</p>
+          <ul class="simple">
+            <li>We tip quartz sand and carbon (basically coal and wood chips) into a giant electric furnace at about 2000 degrees Celsius.</li>
+            <li>The carbon is greedy for oxygen. It grabs the oxygen out of the sand and leaves as gas.</li>
+            <li>What pours out at the bottom is molten silicon, about 99 percent pure. Good enough for solar panels. Nowhere near good enough for a chip.</li>
+          </ul>
+          <div class="tip"><b>Tycoon tip:</b> 99 percent sounds great until you learn the target is 99.9999999 percent. That leftover 1 percent is your next problem.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3 -->
+  <div class="win stage" id="s3">
+    <div class="win-title"><span class="knob"></span>Stop 3 of 20 &middot; Purifier</div>
+    <div class="win-body">
+      <div class="stage-head"><div class="stage-num">3</div><h2>Clean it until it is almost perfect <span class="tag act1">raw material</span></h2></div>
+      <div class="stage-grid">
+        <div class="plate" data-scene="purify"></div>
+        <div>
+          <p class="what">We turn the silicon into a gas, clean the gas, then turn it back into a solid.</p>
+          <ul class="simple">
+            <li>Solids are hard to clean. Gases are easy. So we react the rough silicon with a gas to make a silicon gas, then boil it over and over until the dirt is gone.</li>
+            <li>The clean gas is fed onto hot rods, where the silicon settles out as a solid crust. The result is called <b>polysilicon</b>.</li>
+            <li>Purity is now nine nines: 99.9999999 percent. That is like one wrong grain in a swimming pool of sugar.</li>
+          </ul>
+          <div class="tip"><b>Tycoon tip:</b> why so fussy? A single stray atom of the wrong kind sitting in the wrong spot can stop a switch from switching. And there are billions of switches.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4 -->
+  <div class="win stage" id="s4">
+    <div class="win-title"><span class="knob"></span>Stop 4 of 20 &middot; Crystal Puller</div>
+    <div class="win-body">
+      <div class="stage-head"><div class="stage-num">4</div><h2>Grow one enormous crystal <span class="tag act1">raw material</span></h2></div>
+      <div class="stage-grid">
+        <div class="plate" data-scene="crystal"></div>
+        <div>
+          <p class="what">We melt the polysilicon and slowly pull a single perfect crystal out of it.</p>
+          <ul class="simple">
+            <li>Polysilicon is a jumble of small crystals pointing in random directions. Chips need every atom lined up in one neat repeating grid.</li>
+            <li>So we melt it in a pot, dip in a small seed crystal, and pull the seed upward while spinning it. Silicon freezes onto the seed and copies its exact alignment.</li>
+            <li>Over a day or two you pull out a silver cylinder up to two metres long and 30 cm across, weighing a couple of hundred kilos. It is called an <b>ingot</b>, and it is one single crystal from end to end.</li>
+          </ul>
+          <div class="tip"><b>Tycoon tip:</b> this is the most satisfying ride in the park. Pull too fast and the crystal goes lumpy. Patience is literally the process.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5 -->
+  <div class="win stage" id="s5">
+    <div class="win-title"><span class="knob"></span>Stop 5 of 20 &middot; Wire Saw</div>
+    <div class="win-body">
+      <div class="stage-head"><div class="stage-num">5</div><h2>Slice it into wafers <span class="tag act1">raw material</span></h2></div>
+      <div class="stage-grid">
+        <div class="plate" data-scene="slice"></div>
+        <div>
+          <p class="what">The ingot gets sliced like a salami into thin round plates.</p>
+          <ul class="simple">
+            <li>A saw made of long thin wire coated in diamond grit cuts hundreds of slices at once.</li>
+            <li>Each slice, called a <b>wafer</b>, is under a millimetre thick. It looks like a dull grey plate.</li>
+            <li>The wafer is thicker than it needs to be on purpose. The extra silicon is just there to stop it snapping while robots move it around.</li>
+          </ul>
+          <div class="tip"><b>Tycoon tip:</b> notice the little flat edge or notch cut into the side of every wafer. That is not decoration. It tells the machines which way round the crystal grid is pointing.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6 -->
+  <div class="win stage" id="s6">
+    <div class="win-title"><span class="knob"></span>Stop 6 of 20 &middot; Polisher</div>
+    <div class="win-body">
+      <div class="stage-head"><div class="stage-num">6</div><h2>Polish it into a mirror <span class="tag act1">raw material</span></h2></div>
+      <div class="stage-grid">
+        <div class="plate" data-scene="polish"></div>
+        <div>
+          <p class="what">The wafer is polished until it is flatter than almost anything else humans make.</p>
+          <ul class="simple">
+            <li>Spinning pads and a milky liquid grind the surface smooth, first roughly and then very gently.</li>
+            <li>The finished wafer is a mirror. If you blew it up to the size of a football pitch, the tallest bump would be about the height of a coin.</li>
+            <li>It has to be this flat because we are about to print onto it with light, and light will not stay in focus over a bumpy surface.</li>
+          </ul>
+          <div class="tip"><b>Tycoon tip:</b> your park now sells blank wafers. Plenty of real companies do exactly this and nothing else. Congratulations, you could stop here and still have a business.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =============== ACT 2 =============== -->
+  <div class="act"><span class="k">ACT 2 &middot; DRAWING THE PLAN</span></div>
+
+  <!-- 7 -->
+  <div class="win stage" id="s7">
+    <div class="win-title"><span class="knob"></span>Stop 7 of 20 &middot; Design Lab</div>
+    <div class="win-body">
+      <div class="stage-head"><div class="stage-num">7</div><h2>Draw the blueprint <span class="tag act2">planning</span></h2></div>
+      <div class="stage-grid">
+        <div class="plate" data-scene="design"></div>
+        <div>
+          <p class="what">Before anything is built, engineers draw the circuit on a computer.</p>
+          <ul class="simple">
+            <li>A chip is a road map of billions of tiny switches called <b>transistors</b>, plus the wires joining them up.</li>
+            <li>Nobody draws them one by one. Engineers describe what the chip should do in a special language, and software works out the layout.</li>
+            <li>The final drawing is sliced into <b>layers</b>, like the floors of a building. Each layer becomes one printing job later on.</li>
+          </ul>
+          <div class="tip"><b>Tycoon tip:</b> designing a big modern chip takes hundreds of people a few years and can cost more than the building you are standing in. Mistakes here are expensive, so everything is simulated first.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8 -->
+  <div class="win stage" id="s8">
+    <div class="win-title"><span class="knob"></span>Stop 8 of 20 &middot; Mask Shop</div>
+    <div class="win-body">
+      <div class="stage-head"><div class="stage-num">8</div><h2>Make the stencils <span class="tag act2">planning</span></h2></div>
+      <div class="stage-grid">
+        <div class="plate" data-scene="mask"></div>
+        <div>
+          <p class="what">Each layer of the drawing gets turned into a glass stencil called a mask.</p>
+          <ul class="simple">
+            <li>A mask is a flat plate of very pure glass with the layer's pattern written on it in a thin metal film.</li>
+            <li>Light passes through the clear parts and is blocked by the metal parts. That is the whole idea, exactly like a stencil and a spray can.</li>
+            <li>One chip design needs a full set of masks, often sixty or more. A single set can cost several million.</li>
+          </ul>
+          <div class="tip"><b>Tycoon tip:</b> the mask holds the pattern about four times bigger than the finished chip. The printing machine shrinks it down. Drawing big and printing small is much easier than drawing small.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9 -->
+  <div class="win stage" id="s9">
+    <div class="win-title"><span class="knob"></span>Stop 9 of 20 &middot; Cleanroom</div>
+    <div class="win-body">
+      <div class="stage-head"><div class="stage-num">9</div><h2>Get rid of every speck of dust <span class="tag act2">planning</span></h2></div>
+      <div class="stage-grid">
+        <div class="plate" data-scene="cleanroom"></div>
+        <div>
+          <p class="what">Everything from here on happens inside a room cleaner than an operating theatre.</p>
+          <ul class="simple">
+            <li>The features we are printing are far smaller than a speck of dust. One dust grain landing on a wafer ruins the chip underneath it.</li>
+            <li>Air is pushed down from the ceiling through fine filters and sucked out through the floor, so dust never gets a chance to settle.</li>
+            <li>People wear full white suits, gloves and masks. Not to protect the human. To protect the wafer from the human, because we shed skin and hair constantly.</li>
+          </ul>
+          <div class="tip"><b>Tycoon tip:</b> the best cleanrooms have fewer than ten dust particles per cubic metre of air. Your living room has tens of millions.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =============== ACT 3 =============== -->
+  <div class="act"><span class="k">ACT 3 &middot; PRINTING THE CHIP</span></div>
+
+  <!-- 10 -->
+  <div class="win stage" id="s10">
+    <div class="win-title"><span class="knob"></span>Stop 10 of 20 &middot; Layer Tube</div>
+    <div class="win-body">
+      <div class="stage-head"><div class="stage-num">10</div><h2>Add a paper thin layer <span class="tag act3">the loop</span></h2></div>
+      <div class="stage-grid">
+        <div class="plate" data-scene="layer"></div>
+        <div>
+          <p class="what">We coat the whole wafer with a thin film of some useful material.</p>
+          <ul class="simple">
+            <li>Sometimes we grow it: heat the wafer with oxygen and the top of the silicon turns into glass, which is a great insulator.</li>
+            <li>Sometimes we spray it on: blow in a gas that sticks to the surface and builds up a metal or an insulator, atom by atom.</li>
+            <li>These layers are staggeringly thin. Some are only a handful of atoms deep. Right now the layer covers everything evenly, which is not what we want yet.</li>
+          </ul>
+          <div class="tip"><b>Tycoon tip:</b> think of it as painting a whole wall one colour. The next few stops are about scraping the paint off everywhere except where you actually wanted it.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 11 -->
+  <div class="win stage" id="s11">
+    <div class="win-title"><span class="knob"></span>Stop 11 of 20 &middot; Spin Coater</div>
+    <div class="win-body">
+      <div class="stage-head"><div class="stage-num">11</div><h2>Paint on the light sensitive goo <span class="tag act3">the loop</span></h2></div>
+      <div class="stage-grid">
+        <div class="plate" data-scene="resist"></div>
+        <div>
+          <p class="what">The wafer gets a coat of photoresist, a liquid that changes when light hits it.</p>
+          <ul class="simple">
+            <li>A few drops land in the middle while the wafer spins fast. The spin flings the liquid into a perfectly even coat.</li>
+            <li>Photoresist behaves like the light sensitive film in an old camera. Wherever light lands, it changes.</li>
+            <li>Because it reacts to light, the whole area is lit in yellow light only. Yellow light does not trigger it, which is why fab photos always look like a submarine.</li>
+          </ul>
+          <div class="tip"><b>Tycoon tip:</b> the coat is about as thick as a thousandth of a human hair, and it must be that thick everywhere on a plate 30 cm across. Spinning is a beautifully cheap way to get that.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 12 -->
+  <div class="win stage" id="s12">
+    <div class="win-title"><span class="knob"></span>Stop 12 of 20 &middot; The Printer</div>
+    <div class="win-body">
+      <div class="stage-head"><div class="stage-num">12</div><h2>Shine the light through the stencil <span class="tag act3">the loop</span></h2></div>
+      <div class="stage-grid">
+        <div class="plate" data-scene="litho"></div>
+        <div>
+          <p class="what">This is the heart of the whole factory. We photograph the pattern onto the wafer.</p>
+          <ul class="simple">
+            <li>Light shines through the mask, down through a stack of lenses that shrink the image, and onto the coated wafer. The lit parts of the photoresist change; the shadowed parts do not.</li>
+            <li>Only a small patch is printed at a time. The wafer then steps sideways and the machine prints again, over and over, until the whole plate is covered in copies of the same chip.</li>
+            <li>The very finest patterns use <b>EUV</b>, an extreme kind of light so fussy that it is absorbed by ordinary glass and even by air. So the whole machine works in a vacuum using mirrors instead of lenses.</li>
+          </ul>
+          <div class="tip"><b>Tycoon tip:</b> one EUV machine costs a few hundred million, weighs as much as two buses, ships in dozens of crates, and only one company in the world makes them. This is the ride with the longest queue.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 13 -->
+  <div class="win stage" id="s13">
+    <div class="win-title"><span class="knob"></span>Stop 13 of 20 &middot; Etch Bay</div>
+    <div class="win-body">
+      <div class="stage-head"><div class="stage-num">13</div><h2>Wash and carve <span class="tag act3">the loop</span></h2></div>
+      <div class="stage-grid">
+        <div class="plate" data-scene="etch"></div>
+        <div>
+          <p class="what">Rinse away the changed goo, then eat away the layer underneath wherever it is now exposed.</p>
+          <ul class="simple">
+            <li>First comes <b>develop</b>. A liquid washes off the parts of the photoresist that the light hit, leaving a stencil made of the goo itself.</li>
+            <li>Then comes <b>etch</b>. A glowing cloud of reactive gas chews away the layer that is left uncovered, but cannot touch what is hidden under the remaining resist.</li>
+            <li>Finally the leftover resist is stripped off. What is left behind is your pattern, cut into a real solid layer.</li>
+          </ul>
+          <div class="tip"><b>Tycoon tip:</b> etching has to cut straight down, not sideways. Sideways nibbling would make every line fatter than designed and short things together. Getting perfectly vertical walls is an art form.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 14 -->
+  <div class="win stage" id="s14">
+    <div class="win-title"><span class="knob"></span>Stop 14 of 20 &middot; Ion Gun</div>
+    <div class="win-body">
+      <div class="stage-head"><div class="stage-num">14</div><h2>Fire in the doping atoms <span class="tag act3">the loop</span></h2></div>
+      <div class="stage-grid">
+        <div class="plate" data-scene="dope"></div>
+        <div>
+          <p class="what">We shoot foreign atoms into chosen spots to change how the silicon conducts.</p>
+          <ul class="simple">
+            <li>Pure silicon is a poor conductor. Mixing in a trace of another element, such as boron or phosphorus, makes it conduct in a controllable way.</li>
+            <li>An ion implanter accelerates those atoms to enormous speed and fires them at the wafer like a paint gun. They bury themselves just under the surface.</li>
+            <li>Only the areas we left open get hit. Everywhere else is shielded. This is how you carve the actual switch out of plain silicon.</li>
+          </ul>
+          <div class="tip"><b>Tycoon tip:</b> a transistor is just a doped patch, a doped patch next to it, and a little gate above the gap. Put voltage on the gate and current can flow. Take it away and it stops. That is your one and zero.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 15 -->
+  <div class="win stage" id="s15">
+    <div class="win-title"><span class="knob"></span>Stop 15 of 20 &middot; Wire Floor</div>
+    <div class="win-body">
+      <div class="stage-head"><div class="stage-num">15</div><h2>Join everything up with copper <span class="tag act3">the loop</span></h2></div>
+      <div class="stage-grid">
+        <div class="plate" data-scene="wiring"></div>
+        <div>
+          <p class="what">Billions of switches are useless until they are wired together.</p>
+          <ul class="simple">
+            <li>We etch trenches into an insulating layer, flood the whole surface with copper so the trenches fill up, then polish the excess copper away.</li>
+            <li>What remains is copper sitting neatly inside the trenches. Those are your wires.</li>
+            <li>Then we add another insulating layer on top and do it again. A modern chip has more than a dozen storeys of wiring stacked above the transistors.</li>
+          </ul>
+          <div class="tip"><b>Tycoon tip:</b> if you stretched out all the wiring inside one big processor and laid it end to end, it would run for tens of kilometres. Inside something the size of a stamp.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 16 -->
+  <div class="win stage" id="s16">
+    <div class="win-title"><span class="knob"></span>Stop 16 of 20 &middot; The Loop</div>
+    <div class="win-body">
+      <div class="stage-head"><div class="stage-num">16</div><h2>Now do it all again, about sixty times <span class="tag act3">the loop</span></h2></div>
+      <div class="stage-grid">
+        <div class="plate" data-scene="loop"></div>
+        <div>
+          <p class="what">Stops 10 to 15 are not a one off. They are a loop that runs for months.</p>
+          <ul class="simple">
+            <li>Add a layer, coat it, print it, carve it, dope or fill it, polish flat. Then start again for the next layer up.</li>
+            <li>Every pass uses a different mask, so every pass draws a different floor of the building.</li>
+            <li>Each new layer must line up with the one below to within a few nanometres. The machines measure the wafer's position constantly to keep the stack straight.</li>
+          </ul>
+          <div class="tip"><b>Tycoon tip:</b> this is why a chip takes three months to make and why a wafer travels many kilometres around the fab before it is done. The wafer is not waiting. It is going round and round.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =============== ACT 4 =============== -->
+  <div class="act"><span class="k">ACT 4 &middot; CHIPS OUT THE GATE</span></div>
+
+  <!-- 17 -->
+  <div class="win stage" id="s17">
+    <div class="win-title"><span class="knob"></span>Stop 17 of 20 &middot; Test Bay</div>
+    <div class="win-body">
+      <div class="stage-head"><div class="stage-num">17</div><h2>Find out which ones work <span class="tag act4">finishing</span></h2></div>
+      <div class="stage-grid">
+        <div class="plate" data-scene="test"></div>
+        <div>
+          <p class="what">A machine touches every chip on the wafer and gives it a quick exam.</p>
+          <ul class="simple">
+            <li>Fine needles press onto tiny metal pads on each chip, send in test signals, and check the answers.</li>
+            <li>Failures get marked. On a healthy production line most chips pass, but never all of them.</li>
+            <li>The share that passes is called the <b>yield</b>. Yield is the number that decides whether your park makes money or loses it.</li>
+          </ul>
+          <div class="tip"><b>Tycoon tip:</b> a chip with one broken core is often not thrown away. It gets that core switched off and is sold as a cheaper model. Half the product range in a shop is the same chip, sorted by how well it turned out.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 18 -->
+  <div class="win stage" id="s18">
+    <div class="win-title"><span class="knob"></span>Stop 18 of 20 &middot; Dicing Saw</div>
+    <div class="win-body">
+      <div class="stage-head"><div class="stage-num">18</div><h2>Cut the wafer into chips <span class="tag act4">finishing</span></h2></div>
+      <div class="stage-grid">
+        <div class="plate" data-scene="dice"></div>
+        <div>
+          <p class="what">The round plate is sliced into hundreds of little squares.</p>
+          <ul class="simple">
+            <li>A diamond blade or a laser cuts along narrow empty lanes that the designers left between the chips on purpose.</li>
+            <li>Each freed square is called a <b>die</b>. This is the chip itself, and it is thinner than a fingernail.</li>
+            <li>The good dies get picked up and sent forward. The ones marked as failures are dropped.</li>
+          </ul>
+          <div class="tip"><b>Tycoon tip:</b> the wafer is round but chips are square, so the edge of every wafer is wasted. Bigger wafers waste proportionally less, which is exactly why the industry keeps moving to bigger wafers.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 19 -->
+  <div class="win stage" id="s19">
+    <div class="win-title"><span class="knob"></span>Stop 19 of 20 &middot; Packaging</div>
+    <div class="win-body">
+      <div class="stage-head"><div class="stage-num">19</div><h2>Give the die a case and legs <span class="tag act4">finishing</span></h2></div>
+      <div class="stage-grid">
+        <div class="plate" data-scene="pack"></div>
+        <div>
+          <p class="what">A bare die is far too fragile to use, so it goes into a protective package.</p>
+          <ul class="simple">
+            <li>The die is glued onto a small base board, then joined to the base's metal contacts with hair thin wires or tiny solder balls.</li>
+            <li>A lid or a hard plastic shell goes over the top. That black rectangle you see on a circuit board is the packaging, not the chip.</li>
+            <li>The package also spreads out the connections so that human made circuit boards can actually reach them, and helps carry heat away.</li>
+          </ul>
+          <div class="tip"><b>Tycoon tip:</b> packaging used to be the boring part. Now it is a race of its own, because stacking several dies into one package is often easier than making a single giant one.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 20 -->
+  <div class="win stage" id="s20">
+    <div class="win-title"><span class="knob"></span>Stop 20 of 20 &middot; Shipping</div>
+    <div class="win-body">
+      <div class="stage-head"><div class="stage-num">20</div><h2>Final exam, then out the gate <span class="tag act4">finishing</span></h2></div>
+      <div class="stage-grid">
+        <div class="plate" data-scene="ship"></div>
+        <div>
+          <p class="what">Every packaged chip is tested properly, sorted by quality, and shipped.</p>
+          <ul class="simple">
+            <li>This time the chip is tested hot, cold and at full speed, because a chip that works on a calm bench may fail in a warm laptop.</li>
+            <li>Results decide the grade. The fastest and most reliable chips are sold at the top price, the rest fill the cheaper models.</li>
+            <li>Then they go into trays and reels, onto a plane, and into a factory somewhere that solders them onto circuit boards.</li>
+          </ul>
+          <div class="tip"><b>Tycoon tip:</b> that is the full ride. Sand in at stop one, thinking machine out at stop twenty, about three months and several hundred careful steps later.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="win">
+    <div class="win-title"><span class="knob"></span>End of Tour</div>
+    <div class="win-body">
+      <h3>If you remember only one thing</h3>
+      <p>
+        Making a chip is not carving or assembling. It is <b>printing</b>.
+        We photograph a pattern onto a mirror flat plate of silicon, carve along the picture,
+        and repeat about sixty times to stack up a tiny three dimensional city of switches and wires.
+      </p>
+      <p style="margin-bottom:0">
+        <a class="btn gold" href="game.html">Run your own fab</a>
+        <a class="btn" href="glossary.html">Look up a word</a>
+        <a class="btn" href="index.html">Back to the park</a>
+      </p>
+    </div>
+  </div>
+
+  <p class="foot">ChipTycoon &middot; a friendly explainer. Every drawing here is generated live in your browser.</p>
+
+</div>
+
+<script src="assets/js/iso.js"></script>
+<script src="assets/js/scenes.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>
