@@ -1,67 +1,98 @@
 # ChipTycoon
 
-A small static website that explains how computer chips are made, starting from
-ordinary sand, drawn in the style of the classic park and zoo tycoon games.
+**[▶ Take the tour](https://laurentiugabriel.github.io/ChipTycoon/)**
 
-Open `index.html` in a browser. There is no build step, no server and no
-dependencies. Every drawing is generated as inline SVG in the browser, so the
-whole site is plain text.
+An isometric theme park that is really a chip factory. A cart carries one silicon
+wafer along the roads and stops at each of the twenty buildings that turn ordinary
+sand into a computer chip. The cargo on the cart is the wafer itself, and it changes
+at every stop: a heap of sand, then dark lumps of rough silicon, then white
+polysilicon, a silver crystal, a stack of raw wafers, a mirror-flat disc, a green
+coated disc, a patterned one, and finally a tray of finished chips.
 
-## Pages
+Pure static site. No build step, no dependencies, no network calls.
 
-| File | What it is |
-| --- | --- |
-| `index.html` | The park map, the six line summary and a directory of all twenty stops |
-| `tour.html` | The main content: twenty stops from sand pit to shipping gate, each with its own diorama |
-| `glossary.html` | Every technical word used on the site, explained in one plain sentence |
-| `game.html` | A tiny idle game where you buy the same twenty buildings in the same order |
+## Run it
 
-## How the graphics work
+Open `index.html` in a browser. That is all.
 
-There are no image files. `assets/js/iso.js` is a small isometric drawing
-engine and `assets/js/scenes.js` describes each scene as data.
+Or serve it:
 
-- `iso.js` projects grid coordinates to the screen with
-  `screenX = (x - y) * 32`, `screenY = (x + y) * 16 - z * 18`, and provides
-  primitives: `tile`, `box`, `roof`, `cyl`, `disc`, `at`, plus park props like
-  `person`, `tree`, `lamp` and `sign`.
-- Every primitive returns a depth key. Sorting is height first, then the front
-  bottom corner of the footprint, so anything resting on a table or a roof is
-  always painted after the thing holding it up. Pass `k` to override.
-- `scenes.js` lays out each stop on a 6 by 6 tile plot: a path border around a
-  4 by 4 working floor. Ground is a character map plus a colour legend.
-- `main.js` finds every `[data-scene]` element and fills it with the matching
-  scene.
-
-### Two things worth knowing before editing
-
-1. **Animation classes go on an inner group.** A CSS `transform` beats the SVG
-   `transform` attribute, so putting an animated class on the positioned group
-   drags the prop back to the origin. `at()` handles this by nesting.
-2. **Animations should never reach zero opacity** if the prop matters, because
-   a screenshot or a paused tab can catch it mid cycle and the prop disappears.
-
-## Adding a stop
-
-Add a scene to `scenes.js`:
-
-```js
-scenes.myStop = {
-  alt: 'Description read by screen readers',
-  legend: G, maxz: 5,
-  ground: INDOOR,
-  items: [].concat(
-    machine(1.5, 1.5, '#7fb3d4', 1.2),
-    [person({ x: 2, y: 4.5, c: '#3f7fd4' })],
-    [sign({ x: 5.4, y: 4.3, text: 'MY STOP' })]
-  )
-};
+```
+python -m http.server 8000
+# → http://localhost:8000
 ```
 
-Then drop `<div class="plate" data-scene="myStop"></div>` into the page.
+## Controls
 
-## House style
+| | |
+|---|---|
+| **Space** | play / pause (holds a reading stop indefinitely) |
+| **S** | skip to the next stop |
+| **R** | restart the guided tour |
+| **F** | toggle camera follow |
+| **L** | toggle the signs |
+| drag | pan · scroll: zoom · double-click: show the whole park |
+| **+ − ⤢** | zoom controls on the left edge |
+| click a building | pin its explanation (click empty grass to resume following) |
 
-- No em dashes anywhere in the copy.
-- Explanations assume no science background.
-- Numbers are rounded and given a familiar comparison wherever possible.
+The view starts riding along with the cart, since that is where everything happens.
+Any stop in the guide's route list is clickable and the camera flies straight there.
+
+## Pacing
+
+It is built to be read, not raced. The first time the cart reaches a stop it waits
+between 10 and 22 seconds, scaled to the length of that stop's explanation, and a
+bar under the panel text shows how much of the stop is left. The guided first pass
+therefore takes about **eight minutes**.
+
+After every stop has been explained there is nothing new to read, so the park
+switches to a watchable pace and the repeated lithography laps fast-forward, since
+they are the same road with a different mask. **Reset** (⟲) replays the slow tour.
+
+## The twenty stops
+
+| Act | Stops |
+|---|---|
+| 1 · Sand to wafer | Sand Pit · Furnace · Purifier · Crystal Puller · Wire Saw · Polisher |
+| 2 · Drawing the plan | Design Lab · Mask Shop · Cleanroom Gate |
+| 3 · Printing the chip | Layer Tube · Spin Coater · The Printer · Etch Bay · Ion Gun · Wire Floor · The Loop Counter |
+| 4 · Chips out the gate | Test Bay · Dicing Saw · Packaging · Shipping Gate |
+
+Act 3 is laid out as a ring, because that is what it is. Printing a chip means
+driving the same six buildings once per layer, about sixty times for a real chip.
+The park drives four laps and then moves on, and the Loop Counter shows which
+layer you are on.
+
+## Layout
+
+```
+.github/workflows/  GitHub Pages deployment
+index.html          markup, controls, about copy
+css/styles.css      the tycoon chrome: bevels, wooden borders, gold signage
+js/iso.js           isometric projection + box / prism / cylinder / cone primitives
+js/park.js          routes, stops, lots, one painter per building, scenery
+js/tour.js          the state machine that walks the wafer through the park
+js/render.js        canvas painter's-algorithm renderer
+js/ui.js            guide panel, HUD, transport
+js/main.js          camera, input, frame loop
+```
+
+`Park.routes` holds the polylines the cart drives and `Park.stations` maps distances
+along them to stop IDs. `Tour` fires a stop when the cart reaches a station, which is
+where the cargo changes and the narration switches.
+
+## Notes for editing
+
+- **Depth sorting** is a painter's algorithm keyed on the front corner of each
+  footprint. Each building is a single drawable that paints all of its own parts in
+  the right internal order, which keeps rooftop details out of the global sort.
+- **The ground checker is clipped to the viewport.** The ground plate is deliberately
+  enormous so grass fills the screen at any zoom; drawing every tile of it would cost
+  tens of thousands of quads a frame.
+- **No em dashes** anywhere in the copy.
+
+## Credits
+
+The idea of walking a viewer through a process as a guided isometric tour is borrowed
+from a sibling project, TokenTown, which lays out a language model as a city. All
+code, art and copy here are original.

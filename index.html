@@ -1,135 +1,153 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ChipTycoon - How a Computer Chip Is Made</title>
-<meta name="description" content="Build a chip factory the tycoon way. A simple, friendly guide to how computer chips are made, starting from ordinary sand.">
-<link rel="stylesheet" href="assets/css/style.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%232f3945'/%3E%3Crect x='9' y='9' width='14' height='14' rx='2' fill='%233fb5a0'/%3E%3C/svg%3E">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>ChipTycoon: How a Computer Chip Is Made</title>
+<meta name="description" content="A guided isometric tour of a chip factory. A cart carries one wafer from a pile of sand to a finished chip, stopping at all twenty stages along the way." />
+<link rel="stylesheet" href="css/styles.css" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%232f3945'/%3E%3Crect x='9' y='9' width='14' height='14' rx='2' fill='%233fb5a0'/%3E%3C/svg%3E" />
 </head>
 <body>
 
-<div class="toolbar">
-  <div class="toolbar-in">
-    <a class="logo" href="index.html">Chip<span>Tycoon</span></a>
-    <a class="btn on" href="index.html">Park</a>
-    <a class="btn" href="tour.html">The Tour</a>
-    <a class="btn" href="glossary.html">Word Book</a>
-    <a class="btn gold" href="game.html">Play</a>
+<canvas id="stage"></canvas>
+<div id="tooltip" class="tooltip" hidden></div>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="logo" aria-hidden="true"></div>
+    <div class="brand-text">
+      <h1>Chip<span>Tycoon</span></h1>
+      <p>One wafer, twenty stops, sand to finished chip</p>
+    </div>
+  </div>
+  <div class="top-actions">
+    <button id="btn-about" class="btn">About</button>
+    <button id="btn-panel" class="btn" aria-expanded="true">Hide guide</button>
+  </div>
+</header>
+
+<div class="hud" id="hud">
+  <div class="hud-item"><span class="k">Stops seen</span><span class="v" id="ui-hudStop">0 / 20</span></div>
+  <div class="hud-item"><span class="k">Layer</span><span class="v" id="ui-hudLayer">1 of 4</span></div>
+  <div class="hud-item"><span class="k">Wafer</span><span class="v" id="ui-hudBatch">#1</span></div>
+  <div class="hud-note" id="ui-hudNote"></div>
+</div>
+
+<div class="zoomer">
+  <button id="zoom-in" title="Zoom in" aria-label="Zoom in">+</button>
+  <button id="zoom-out" title="Zoom out" aria-label="Zoom out">−</button>
+  <button id="zoom-fit" title="Show the whole park (or double-click)" aria-label="Fit the whole park">⤢</button>
+</div>
+
+<aside class="guide" id="guide">
+  <div class="stop-card">
+    <div class="eyebrow">
+      <span class="chip act1" id="ui-chip">Stop 1 of 20</span>
+    </div>
+    <h2 id="ui-name">Sand Pit</h2>
+    <p class="lede" id="ui-short"></p>
+    <p class="body" id="ui-body"></p>
+    <p class="tip" id="ui-tip"></p>
+
+    <div class="dwell" id="ui-dwell" hidden>
+      <i id="ui-dwellBar"></i>
+      <span id="ui-dwellHint"></span>
+    </div>
+
+    <div class="pin-note" id="ui-pinNote" hidden>
+      Pinned to this stop.
+      <button id="btn-unpin" class="link">Follow the cart again</button>
+    </div>
+  </div>
+
+  <section class="sec">
+    <h3>The whole route <span class="hint">click any stop to ride there</span></h3>
+    <div class="stop-list" id="ui-stopList"></div>
+  </section>
+
+  <section class="sec">
+    <h3>What you are watching</h3>
+    <p class="fine">The yellow cart carries one wafer. Its cargo changes at every stop:
+      sand, then rough silicon, then a silver crystal, then a mirror-flat disc, and finally
+      a tray of chips. The middle of the park is a ring, because printing a chip means
+      driving the same six buildings about sixty times, once per layer.</p>
+  </section>
+</aside>
+
+<footer class="dock" id="dock">
+  <div class="progress"><i id="ui-progressBar"></i></div>
+  <div class="dock-row">
+    <div class="group">
+      <button id="btn-play" class="icon" title="Play or pause (Space)"><span id="ui-playGlyph">❙❙</span></button>
+      <button id="btn-step" class="icon" title="Skip to the next stop (S)">⇥</button>
+      <button id="btn-restart" class="icon" title="Restart the guided tour (R)">⟲</button>
+    </div>
+
+    <label class="field slider">
+      <span>Speed <b id="v-speed">1.0×</b></span>
+      <input id="speed" type="range" min="0.4" max="6" step="0.1" value="1" />
+    </label>
+
+    <div class="group toggles">
+      <label class="toggle"><input id="follow" type="checkbox" checked /><span>Follow</span></label>
+      <label class="toggle"><input id="labels" type="checkbox" checked /><span>Signs</span></label>
+    </div>
+  </div>
+</footer>
+
+<div class="modal" id="about" hidden>
+  <div class="modal-card">
+    <button class="modal-close" id="about-close" aria-label="Close">×</button>
+    <h2>What this is</h2>
+    <p>ChipTycoon is a working chip factory laid out as a theme park. A cart carries one
+      silicon wafer along the roads and stops at each of the twenty buildings that turn
+      ordinary sand into a computer chip. The cargo on the cart is the wafer itself, and it
+      visibly changes at every stop, so you can always see what stage the material is at.</p>
+
+    <h2>Why the middle is a ring</h2>
+    <p>Making a chip is not carving or assembling. It is printing. A pattern is photographed
+      onto the wafer with light, carved into a solid layer, and then the whole thing happens
+      again for the next layer up. A real chip is about sixty of those layers stacked on top
+      of each other, which is why the cart drives the same six buildings round and round.
+      The park shows four laps and then moves on, so you are not sat there for an hour.</p>
+
+    <h2>Pacing</h2>
+    <p>The first time the cart reaches a stop it waits long enough for you to read that
+      stop's explanation, between 10 and 22 seconds depending on how much there is to say,
+      and a bar under the panel text shows how long is left. Once every stop has been
+      explained there is nothing new to read, so the park speeds up to a watchable pace. The guided first pass takes about eight minutes.
+      <b>Space</b> holds any stop for as long as you like, <b>S</b> skips to the next one, and
+      the speed slider scales everything, reading stops included.</p>
+
+    <h2>Controls</h2>
+    <ul>
+      <li><b>Space</b> play or pause · <b>S</b> next stop · <b>R</b> restart the tour ·
+          <b>F</b> follow camera · <b>L</b> signs</li>
+      <li>Drag to pan, scroll to zoom, double-click to see the whole park.</li>
+      <li>Click any building for its explanation, or pick a stop from the list in the guide
+          to ride straight there.</li>
+    </ul>
+
+    <h2>How accurate is it</h2>
+    <p>The order of the stages, and what each one physically does, is real: quartz sand,
+      carbon reduction, the Siemens purification, Czochralski crystal growth, wire sawing,
+      polishing, mask making, deposition, photoresist, exposure, develop and etch, ion
+      implantation, copper damascene wiring, wafer probe, dicing, packaging and final sort.
+      The numbers quoted are typical rather than exact, since they vary enormously between
+      products. Scaled down for the sake of the ride: four laps instead of about sixty, one
+      wafer instead of a lot moving in parallel, and a park you can walk across in a minute
+      instead of a building the size of several football pitches.</p>
+    <p class="fine">No build step, no dependencies, no network calls. Every shape on screen
+      is drawn from plain polygons in a canvas.</p>
   </div>
 </div>
 
-<div class="wrap">
-
-  <h1>ChipTycoon</h1>
-  <p class="subtitle">Build the factory that turns sand into a computer chip</p>
-
-  <div class="win">
-    <div class="win-title"><span class="knob"></span>Your Park Map</div>
-    <div class="win-body">
-      <div class="plate" data-scene="park"></div>
-      <p style="margin-top:14px">
-        Welcome, boss. This is your factory park. Trucks bring in plain sand at the gate.
-        Twenty buildings later, tiny computer chips roll out the other side.
-      </p>
-      <p>
-        A chip is a small square of silicon with billions of tiny switches printed on it.
-        Those switches do all the thinking in your phone, your laptop, your car and your washing machine.
-        The whole trick is this: we draw the switches with light, one thin layer at a time,
-        and we stack the layers up like a cake.
-      </p>
-      <p style="margin-bottom:0">
-        <a class="btn gold" href="tour.html">Start the factory tour</a>
-      </p>
-    </div>
-  </div>
-
-  <div class="win">
-    <div class="win-title"><span class="knob"></span>Park Statistics</div>
-    <div class="win-body">
-      <div class="stats">
-        <div class="stat"><b>20</b><span>Buildings to visit</span></div>
-        <div class="stat"><b>~3 months</b><span>Sand to finished chip</span></div>
-        <div class="stat"><b>~60</b><span>Layers stacked up</span></div>
-        <div class="stat"><b>Billions</b><span>Switches per chip</span></div>
-      </div>
-      <p style="margin:16px 0 0">
-        Yes, three months. A chip factory is the slowest ride in the park, and also the most expensive one.
-        A single big factory costs more than a large airport.
-      </p>
-    </div>
-  </div>
-
-  <div class="win">
-    <div class="win-title"><span class="knob"></span>The Whole Story in Six Lines</div>
-    <div class="win-body">
-      <ul class="simple">
-        <li><b>Sand is mostly silicon</b> stuck to oxygen. We cook the oxygen off and keep the silicon.</li>
-        <li><b>We clean the silicon</b> until it is unbelievably pure, then grow it into one giant crystal.</li>
-        <li><b>We slice the crystal</b> into thin round plates called wafers, and polish them like mirrors.</li>
-        <li><b>We print a pattern</b> onto the wafer with light, using a glass stencil called a mask.</li>
-        <li><b>We carve, add and repeat</b> that printing about sixty times to build the switches and their wiring.</li>
-        <li><b>We test, cut and package</b> the wafer into hundreds of finished chips, then ship them.</li>
-      </ul>
-      <p style="margin-bottom:0">Every stage on the tour is one of those six ideas, just in more detail.</p>
-    </div>
-  </div>
-
-  <div class="win">
-    <div class="win-title"><span class="knob"></span>Ride Directory</div>
-    <div class="win-body">
-      <p>Jump straight to any building.</p>
-      <div class="ridelist">
-        <a class="ride" href="tour.html#s1">1. Sand Pit<small>Where it all starts</small></a>
-        <a class="ride" href="tour.html#s2">2. Furnace<small>Sand becomes silicon</small></a>
-        <a class="ride" href="tour.html#s3">3. Purifier<small>Clean it to 9 nines</small></a>
-        <a class="ride" href="tour.html#s4">4. Crystal Puller<small>Grow one huge crystal</small></a>
-        <a class="ride" href="tour.html#s5">5. Wire Saw<small>Slice into wafers</small></a>
-        <a class="ride" href="tour.html#s6">6. Polisher<small>Mirror smooth</small></a>
-        <a class="ride" href="tour.html#s7">7. Design Lab<small>Draw the blueprint</small></a>
-        <a class="ride" href="tour.html#s8">8. Mask Shop<small>Make the stencils</small></a>
-        <a class="ride" href="tour.html#s9">9. Cleanroom<small>Dust is the enemy</small></a>
-        <a class="ride" href="tour.html#s10">10. Layer Tube<small>Add a thin layer</small></a>
-        <a class="ride" href="tour.html#s11">11. Spin Coater<small>Paint on the resist</small></a>
-        <a class="ride" href="tour.html#s12">12. The Printer<small>Shine the light</small></a>
-        <a class="ride" href="tour.html#s13">13. Etch Bay<small>Carve the pattern</small></a>
-        <a class="ride" href="tour.html#s14">14. Ion Gun<small>Add doping atoms</small></a>
-        <a class="ride" href="tour.html#s15">15. Wire Floor<small>Copper wiring</small></a>
-        <a class="ride" href="tour.html#s16">16. The Loop<small>Do it all again</small></a>
-        <a class="ride" href="tour.html#s17">17. Test Bay<small>Which ones work</small></a>
-        <a class="ride" href="tour.html#s18">18. Dicing Saw<small>Cut into chips</small></a>
-        <a class="ride" href="tour.html#s19">19. Packaging<small>Give it a case</small></a>
-        <a class="ride" href="tour.html#s20">20. Shipping<small>Out the gate</small></a>
-      </div>
-    </div>
-  </div>
-
-  <div class="win">
-    <div class="win-title"><span class="knob"></span>Before You Go In</div>
-    <div class="win-body">
-      <h3>Three words you will keep hearing</h3>
-      <ul class="simple">
-        <li><b>Wafer.</b> The thin round plate of silicon. Think of a shiny grey pizza base about 30 cm across.</li>
-        <li><b>Die.</b> One single chip on that wafer. A wafer holds anywhere from a few dozen to a few thousand dies.</li>
-        <li><b>Fab.</b> Short for fabrication plant. It is the factory building where the printing happens.</li>
-      </ul>
-      <div class="tip">
-        <b>Tycoon tip:</b> if a word ever confuses you, the <a href="glossary.html">Word Book</a> has a plain
-        English version of every term used on this site.
-      </div>
-    </div>
-  </div>
-
-  <p class="foot">
-    ChipTycoon is a friendly explainer, not a real factory manual.
-    All the drawings on this site are built from plain shapes in your browser.
-  </p>
-
-</div>
-
-<script src="assets/js/iso.js"></script>
-<script src="assets/js/scenes.js"></script>
-<script src="assets/js/main.js"></script>
+<script src="js/iso.js"></script>
+<script src="js/park.js"></script>
+<script src="js/tour.js"></script>
+<script src="js/render.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/main.js"></script>
 </body>
 </html>
