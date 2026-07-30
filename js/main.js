@@ -27,18 +27,41 @@
   var elHud = document.getElementById('hud');
   var elTop = document.querySelector('.topbar');
 
+  /* Avoid a ResizeObserver feedback loop: writing a variable that is already
+     set would resize the chrome again and re-fire the observer forever. */
+  var lastVars = {};
+  function setVar(name, value) {
+    if (lastVars[name] === value) return;
+    lastVars[name] = value;
+    document.documentElement.style.setProperty(name, value);
+  }
+
   function measure() {
-    var mobile = viewW <= 900;
+    var top = elTop ? elTop.getBoundingClientRect().height : 52;
     var hud = elHud ? elHud.getBoundingClientRect() : null;
-    layout.top = hud ? Math.max(60, hud.bottom + 8) : 64;
-    layout.dock = elDock ? elDock.getBoundingClientRect().height + 12 : 120;
-    var hidden = !elPanel || elPanel.classList.contains('hidden');
-    if (mobile) {
-      layout.panel = 0;
-      layout.sheet = hidden ? 0 : (elPanel.getBoundingClientRect().height || 0);
+    layout.top = hud ? Math.max(top + 4, hud.bottom + 8) : top + 8;
+
+    var dockH = elDock ? elDock.getBoundingClientRect().height : 96;
+    layout.dock = dockH + 16;
+
+    /* CSS pins the sheet and the zoom buttons to these measured heights, so the
+       layout survives the controls wrapping onto a second row. */
+    setVar('--hud-top', Math.round(top + 4) + 'px');
+    setVar('--hud-h', Math.round(layout.top) + 'px');
+    setVar('--dock-h', Math.round(dockH + 18) + 'px');
+
+    if (!elPanel || elPanel.classList.contains('hidden')) {
+      layout.panel = 0; layout.sheet = 0;
+      return;
+    }
+    /* Read which arrangement CSS actually chose rather than guessing from the
+       viewport width: a panel spanning the full width is a bottom sheet and
+       costs height, anything narrower is a side column and costs width. */
+    var r = elPanel.getBoundingClientRect();
+    if (r.width > viewW * 0.8) {
+      layout.sheet = r.height + 12; layout.panel = 0;
     } else {
-      layout.sheet = 0;
-      layout.panel = hidden ? 0 : (elPanel.getBoundingClientRect().width + 26);
+      layout.panel = r.width + 26; layout.sheet = 0;
     }
   }
 

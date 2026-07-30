@@ -296,23 +296,107 @@ input[type="range"] { width: 100%; accent-color: var(--green); }
   border: 2px solid var(--wood-dark); border-radius: 4px;
 }
 
+/* ---------- the bottom sheet handle (phones only) ---------- */
+
+.sheet-handle { display: none; }
+.guide-more { display: block; }
+
 /* ---------- narrow screens ---------- */
 
+/* --dock-h and --hud-h are written by main.js from the measured chrome, so the
+   sheet sits exactly on the dock however the controls happen to wrap. */
 @media (max-width: 900px) {
+  .topbar { padding: 6px 10px; }
   .brand-text p { display: none; }
-  .guide {
-    top: auto; right: 12px; left: 12px; bottom: 118px;
-    width: auto; max-height: 46vh;
+  .brand-text h1 { font-size: 17px; }
+  .logo { width: 22px; height: 22px; }
+  .btn { padding: 5px 10px; font-size: 13px; }
+
+  .hud { top: var(--hud-top, 48px); left: 8px; gap: 5px; }
+  .hud-item { padding: 3px 8px; }
+  .hud-item .k { font-size: 9.5px; }
+  .hud-item .v { font-size: 12.5px; }
+  .hud-note { width: 100%; padding: 2px 4px; font-size: 11px; }
+
+  .zoomer {
+    top: calc(var(--hud-h, 108px) + 4px); bottom: auto; transform: none;
+    left: 8px; flex-direction: row;
   }
-  .zoomer { top: auto; bottom: 132px; transform: none; }
-  .hud { top: 54px; }
-  .hud-note { width: 100%; }
-  .field { min-width: 120px; }
-  .toggles { margin-left: 0; }
+  .zoomer button { width: 32px; height: 32px; }
+
+  /* the guide becomes a sheet pinned above the dock */
+  .guide {
+    top: auto; left: 8px; right: 8px;
+    bottom: var(--dock-h, 82px);
+    width: auto; max-height: 38vh;
+    padding: 0 12px 12px;
+    overscroll-behavior: contain;
+  }
+  .guide h2 { font-size: 20px; margin-bottom: 6px; }
+  .lede { font-size: 14.5px; padding: 6px 9px; margin-bottom: 8px; }
+  .body { font-size: 13.5px; }
+  .tip { font-size: 12.5px; }
+
+  /* collapsed by default: the head is enough to follow the tour */
+  .guide-more { display: none; }
+  .guide.open { max-height: 62vh; }
+  .guide.open .guide-more { display: block; }
+
+  /* a long lede must not grow the collapsed sheet without limit */
+  .guide:not(.open) .lede {
+    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .sheet-handle {
+    display: flex; align-items: center; gap: 8px;
+    position: sticky; top: 0; z-index: 2;
+    width: calc(100% + 24px); margin: 0 -12px 2px;
+    padding: 9px 12px;
+    font: inherit; font-size: 12.5px; font-weight: bold;
+    color: var(--ink-soft); cursor: pointer;
+    background: var(--panel);
+    border: 0; border-bottom: 2px solid var(--panel-dark);
+  }
+  .sheet-handle .grip {
+    width: 34px; height: 4px; border-radius: 2px;
+    background: var(--panel-dark);
+  }
+  .sheet-handle .sheet-caret { margin-left: auto; font-size: 14px; }
+  .guide.open .sheet-handle .sheet-caret { transform: rotate(180deg); }
+
+  .dock { left: 8px; right: 8px; bottom: 8px; }
+  .dock-row { gap: 10px; padding: 7px 10px 0; }
+  .icon { width: 36px; height: 32px; font-size: 14px; }
+  .field { min-width: 0; flex: 1 1 90px; }
+  .field span { font-size: 10.5px; }
+  .toggles { margin-left: 0; gap: 10px; }
+  .toggle { font-size: 12px; }
 }
 
-@media (max-width: 560px) {
-  .guide { max-height: 40vh; }
-  .guide h2 { font-size: 21px; }
-  .lede { font-size: 15px; }
+@media (max-width: 430px) {
+  .guide { max-height: 34vh; }
+  .guide.open { max-height: 58vh; }
+  .guide h2 { font-size: 18px; }
+  .lede { font-size: 13.5px; }
+  .hud-item:nth-child(3) { display: none; }   /* wafer number is the least useful */
+  .toggles { width: 100%; justify-content: space-between; }
+}
+
+/* Short and wide, which is any phone held sideways. A bottom sheet would eat
+   the whole map, so the guide goes back to being a column down the side. */
+@media (max-height: 560px) and (min-width: 620px) {
+  .guide {
+    top: var(--hud-h, 96px); bottom: var(--dock-h, 76px);
+    left: auto; right: 8px; width: 300px; max-height: none;
+    padding: 12px;
+  }
+  .guide.open { max-height: none; }
+  .guide-more { display: block; }
+  .sheet-handle { display: none; }
+  .zoomer {
+    top: auto; bottom: calc(var(--dock-h, 76px) + 8px);
+    left: 8px; flex-direction: column;
+  }
+  .guide:not(.open) .lede { display: block; overflow: visible; }
 }

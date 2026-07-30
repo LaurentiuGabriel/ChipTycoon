@@ -38,6 +38,18 @@
       if (e.target === $('about')) $('about').hidden = true;
     });
 
+    /* The phone sheet: collapsed shows just the stop head, expanded shows the
+       full explanation and the route list. */
+    var sheet = $('sheet-handle');
+    sheet.addEventListener('click', function () {
+      var g = $('guide');
+      var open = !g.classList.contains('open');
+      g.classList.toggle('open', open);
+      sheet.setAttribute('aria-expanded', String(open));
+      sheet.querySelector('.sheet-label').textContent = open ? 'Show less' : 'Read more';
+      if (open) g.scrollTop = 0;
+    });
+
     var pbtn = $('btn-panel');
     pbtn.addEventListener('click', function () {
       var p = $('guide');
@@ -65,9 +77,20 @@
         pinned = null;
         Tour.jumpTo(s.id);
         flyTo = { x: s.x, y: s.y };
+        collapseSheet();   /* on a phone, get out of the way of the ride */
       });
       host.appendChild(b);
     });
+  }
+
+  /* No-op unless the sheet layout is active, since the handle is display:none
+     on wider screens where nothing is collapsed in the first place. */
+  function collapseSheet() {
+    var g = $('guide'), h = $('sheet-handle');
+    if (!g || !h || !h.offsetParent) return;
+    g.classList.remove('open');
+    h.setAttribute('aria-expanded', 'false');
+    h.querySelector('.sheet-label').textContent = 'Read more';
   }
 
   function showStop(stop, isPin) {

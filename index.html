@@ -18,7 +18,6 @@
     <div class="logo" aria-hidden="true"></div>
     <div class="brand-text">
       <h1>Chip<span>Tycoon</span></h1>
-      <p>One wafer, twenty stops, sand to finished chip</p>
     </div>
   </div>
   <div class="top-actions">
@@ -41,38 +40,49 @@
 </div>
 
 <aside class="guide" id="guide">
-  <div class="stop-card">
+  <!-- On a phone the guide is a bottom sheet: the head stays visible and
+       everything below the handle collapses, so the park is never buried. -->
+  <button class="sheet-handle" id="sheet-handle" aria-expanded="false" aria-controls="guide-more">
+    <span class="grip" aria-hidden="true"></span>
+    <span class="sheet-label">Read more</span>
+    <span class="sheet-caret" aria-hidden="true">▾</span>
+  </button>
+
+  <div class="stop-head">
     <div class="eyebrow">
       <span class="chip act1" id="ui-chip">Stop 1 of 20</span>
     </div>
     <h2 id="ui-name">Sand Pit</h2>
     <p class="lede" id="ui-short"></p>
-    <p class="body" id="ui-body"></p>
-    <p class="tip" id="ui-tip"></p>
 
     <div class="dwell" id="ui-dwell" hidden>
       <i id="ui-dwellBar"></i>
       <span id="ui-dwellHint"></span>
     </div>
+  </div>
+
+  <div class="guide-more" id="guide-more">
+    <p class="body" id="ui-body"></p>
+    <p class="tip" id="ui-tip"></p>
 
     <div class="pin-note" id="ui-pinNote" hidden>
       Pinned to this stop.
       <button id="btn-unpin" class="link">Follow the cart again</button>
     </div>
+
+    <section class="sec">
+      <h3>The whole route <span class="hint">click any stop to ride there</span></h3>
+      <div class="stop-list" id="ui-stopList"></div>
+    </section>
+
+    <section class="sec">
+      <h3>What you are watching</h3>
+      <p class="fine">The yellow cart carries one wafer. Its cargo changes at every stop:
+        sand, then rough silicon, then a silver crystal, then a mirror-flat disc, and finally
+        a tray of chips. The middle of the park is a ring, because printing a chip means
+        driving the same six buildings about sixty times, once per layer.</p>
+    </section>
   </div>
-
-  <section class="sec">
-    <h3>The whole route <span class="hint">click any stop to ride there</span></h3>
-    <div class="stop-list" id="ui-stopList"></div>
-  </section>
-
-  <section class="sec">
-    <h3>What you are watching</h3>
-    <p class="fine">The yellow cart carries one wafer. Its cargo changes at every stop:
-      sand, then rough silicon, then a silver crystal, then a mirror-flat disc, and finally
-      a tray of chips. The middle of the park is a ring, because printing a chip means
-      driving the same six buildings about sixty times, once per layer.</p>
-  </section>
 </aside>
 
 <footer class="dock" id="dock">
