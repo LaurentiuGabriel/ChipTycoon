@@ -17,10 +17,10 @@
   /* What the cart is carrying after each stop fires. */
   var CARGO = {
     sand: 'sand', furnace: 'lump', purify: 'poly', crystal: 'ingot',
-    saw: 'wafers', polish: 'mirror', design: 'mirror', mask: 'mirror',
-    cleanroom: 'mirror', layer: 'coated', resist: 'resist', litho: 'exposed',
+    saw: 'wafers', polish: 'mirror', design: 'blueprint', mask: 'withmask',
+    cleanroom: 'pod', layer: 'coated', resist: 'resist', litho: 'exposed',
     etch: 'etched', dope: 'doped', wiring: 'wired', loopct: 'stack',
-    test: 'tested', dice: 'chips', pack: 'packaged', ship: 'boxed',
+    test: 'tested', dice: 'dies', pack: 'packaged', ship: 'boxed',
     newbatch: 'empty'
   };
 
@@ -33,6 +33,7 @@
     stage: null,               // the stop currently being explained
     stageT: 0,
     cargo: 'empty',
+    layers: 0,          // finished layers on the wafer, drawn as a growing stack
     lap: 1,
     laps: 4,                   // laps actually driven; a real chip runs ~60
     layersReal: 60,
@@ -62,6 +63,7 @@
     cart.stationIdx = 0;
     cart.dwell = 0;
     state.lap = 1;
+    state.layers = 0;
     state.cargo = 'empty';
     state.stage = null;
   }
@@ -99,6 +101,7 @@
          detail; the rest are the same road with a different mask, so they run
          fast, exactly as a real fab repeats the same tools. */
       state.lap++;
+      state.layers = Math.min(state.laps, state.layers + 1);
       if (state.lap > state.laps) {
         cart.routeName = 'exit';
         cart.dist = 0;

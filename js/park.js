@@ -821,8 +821,41 @@
 
   /* ---- exports ----------------------------------------------------------- */
 
+  /* What the cart is carrying, named on a tag above it so the change at each
+     stop is legible without reading the panel. */
+  var CARGO_LABELS = {
+    empty:     'empty cart',
+    sand:      'quartz sand',
+    lump:      'rough silicon, 99%',
+    poly:      'polysilicon, 9 nines pure',
+    ingot:     'one single crystal',
+    wafers:    'sliced wafers',
+    mirror:    'polished mirror wafer',
+    blueprint: 'wafer + the chip design',
+    withmask:  'wafer + the mask set',
+    pod:       'sealed for the cleanroom',
+    coated:    'fresh layer added',
+    resist:    'photoresist coat',
+    exposed:   'pattern exposed',
+    etched:    'pattern etched in',
+    doped:     'atoms implanted',
+    wired:     'copper wiring filled',
+    stack:     'one more layer done',
+    tested:    'tested, failures marked',
+    dies:      'cut into dies',
+    packaged:  'packaged chips',
+    boxed:     'boxed for shipping'
+  };
+
+  /* Cargo kinds that live inside the lithography ring, so the tag can add the
+     layer count to them and only them. */
+  var LOOP_CARGO = {
+    coated: 1, resist: 1, exposed: 1, etched: 1, doped: 1, wired: 1, stack: 1
+  };
+
   global.Park = {
     C: C, BOUNDS: BOUNDS, GROUND: GROUND, LOTS: LOTS,
+    cargoLabels: CARGO_LABELS, loopCargo: LOOP_CARGO,
     routes: ROUTES, stations: STATIONS,
     stops: STOPS, stopById: STOP_BY_ID,
     buildings: B,

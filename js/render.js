@@ -156,96 +156,231 @@
 
   /* ---- the cart and its cargo -------------------------------------------- */
 
-  function drawCargo(ctx, x, y, z, kind, t, lap) {
-    var i;
-    switch (kind) {
+  var R = 0.82;          // wafer radius on the cart
+  var PLATE = 0.15;      // height of one finished layer in the stack
+
+  /* The wafer, plus one coloured plate for every layer already finished. This
+     is what makes the ring worth driving: the stack visibly grows each lap.
+     Returns the height of the top surface, where the working layer goes. */
+  function waferStack(ctx, x, y, z, layers) {
+    Park.draw.waferDisc(ctx, x, y, z, R, '#dbe6f0');
+    var n = Math.min(6, layers || 0);
+    /* Each plate is a shade narrower than the one below it. Real layers are all
+       the same width, but stacked dead flush they read as a single disc; the
+       slight step is what makes the count legible at park zoom. */
+    for (var i = 0; i < n; i++) {
+      Park.draw.waferDisc(ctx, x, y, z + (i + 1) * PLATE, R * (1 - (i + 1) * 0.045),
+                          i % 2 ? '#8fd0e8' : '#c9793f');
+    }
+    return z + (n + 1) * PLATE;
+  }
+
+  /* Parallel bars across the wafer: trenches after etching, wires after fill. */
+  function bars(ctx, x, y, z, c, n, wide) {
+    ctx.fillStyle = c;
+    for (var i = 0; i < n; i++) {
+      var o = (i - (n - 1) / 2) * (R * 1.5 / n);
+      Iso.ribbon(ctx, x + o, y - R * 0.62, x + o, y + R * 0.62, wide, z);
+    }
+  }
+
+  /* The dies after the saw has been through: same grid, but pushed apart so
+     you can see they are now separate pieces rather than one plate. */
+  function dieSplit(ctx, x, y, z, spread, marked) {
+    var n = 7, cell = (R * 2) / n, half = n / 2;
+    for (var gy = 0; gy < n; gy++) {
+      for (var gx = 0; gx < n; gx++) {
+        var dx = gx - half + 0.5, dy = gy - half + 0.5;
+        if (dx * dx + dy * dy > half * half * 0.84) continue;
+        var px = x + dx * cell * spread, py = y + dy * cell * spread;
+        var h = cell * 0.33;
+        ctx.fillStyle = (marked && ((gx * 7 + gy * 5) % 17) === 0) ? '#d94f3d' : '#3fb5a0';
+        Iso.poly(ctx, [Iso.project(px - h, py - h, z), Iso.project(px + h, py - h, z),
+                       Iso.project(px + h, py + h, z), Iso.project(px - h, py + h, z)]);
+      }
+    }
+  }
+
+  function rubble(ctx, x, y, z, c, h) {
+    for (var i = 0; i < 5; i++) {
+      var a = i * 1.31;
+      Iso.box(ctx, { x: x - 0.42 + Math.cos(a) * 0.3, y: y - 0.34 + Math.sin(a) * 0.26,
+                     z: z + (i === 4 ? 0.24 : 0), w: 0.36, d: 0.32, h: h, color: c });
+    }
+  }
+
+  function drawCargo(ctx, x, y, z, s, t) {
+    var top, i;
+    switch (s.cargo) {
       case 'sand':
-        ctx.fillStyle = '#d9c084'; Iso.disc(ctx, x, y, z, 0.62);
-        Iso.cone(ctx, x, y, z, 0.6, 0.5, '#e5d09a');
+        ctx.fillStyle = '#c9ad72'; Iso.disc(ctx, x, y, z, 0.72);
+        Iso.cone(ctx, x, y, z, 0.7, 0.6, '#e5d09a');
         break;
-      case 'lump':
-        for (i = 0; i < 4; i++) {
-          var a = i * 1.7;
-          Iso.box(ctx, { x: x - 0.4 + Math.cos(a) * 0.22, y: y - 0.3 + Math.sin(a) * 0.2,
-                         z: z, w: 0.38, d: 0.34, h: 0.26, color: '#4a4a4a' });
-        }
-        break;
-      case 'poly':
-        for (i = 0; i < 4; i++) {
-          var a2 = i * 1.7;
-          Iso.box(ctx, { x: x - 0.4 + Math.cos(a2) * 0.22, y: y - 0.3 + Math.sin(a2) * 0.2,
-                         z: z, w: 0.36, d: 0.32, h: 0.3, color: '#d7dde3' });
-        }
-        break;
+
+      case 'lump':   rubble(ctx, x, y, z, '#43443f', 0.26); break;
+      case 'poly':   rubble(ctx, x, y, z, '#dde3e9', 0.3); break;
+
       case 'ingot':
-        Iso.orientedBox(ctx, { x: x, y: y, hx: 1, hy: 0, len: 1.9, wid: 0.62, z: z, h: 0.62, color: '#aab7c6' });
+        Iso.orientedBox(ctx, { x: x, y: y, hx: 1, hy: 0, len: 2.0, wid: 0.68, z: z, h: 0.68, color: '#aab7c6' });
+        ctx.fillStyle = 'rgba(255,255,255,0.4)';
+        Iso.ribbon(ctx, x - 0.9, y - 0.2, x + 0.9, y - 0.2, 0.16, z + 0.69);
         break;
-      case 'wafers':
-        for (i = 0; i < 4; i++) Park.draw.waferDisc(ctx, x, y, z + i * 0.09, 0.62, '#a8bbcd');
+
+      case 'wafers':                     /* rough slices, straight off the saw */
+        for (i = 0; i < 5; i++) Park.draw.waferDisc(ctx, x, y, z + i * 0.08, R * 0.86, '#9fb0c2');
         break;
+
       case 'mirror':
-        Park.draw.waferDisc(ctx, x, y, z + 0.05, 0.72, '#e6eef5');
+        Park.draw.waferDisc(ctx, x, y, z, R, '#e9f1f8');
+        ctx.fillStyle = 'rgba(255,255,255,0.85)';
+        Iso.disc(ctx, x - R * 0.3, y - R * 0.3, z + 0.01, R * 0.34);
         break;
-      case 'coated':
-        Park.draw.waferDisc(ctx, x, y, z + 0.05, 0.72, '#8fd0e8');
+
+      case 'blueprint':                  /* the wafer, now with a design to print */
+        Park.draw.waferDisc(ctx, x, y, z, R, '#e9f1f8');
+        Iso.orientedBox(ctx, { x: x, y: y + 0.05, hx: 1, hy: 0, len: 1.5, wid: 0.3,
+                               z: z + 0.06, h: 0.3, color: '#2f6b9e' });
         break;
-      case 'resist':
-        Park.draw.waferDisc(ctx, x, y, z + 0.05, 0.72, '#3fb5a0');
-        break;
-      case 'exposed':
-        Park.draw.waferDisc(ctx, x, y, z + 0.05, 0.72, '#3fb5a0');
-        ctx.globalAlpha = 0.4 + 0.4 * Math.sin(t * 6);
-        ctx.fillStyle = '#ffffff'; Iso.disc(ctx, x, y, z + 0.06, 0.72);
+
+      case 'withmask':                   /* a glass mask plate riding alongside */
+        Park.draw.waferDisc(ctx, x, y, z, R, '#e9f1f8');
+        var mp = Iso.project(x, y, z + 0.1);
+        ctx.globalAlpha = 0.85;
+        ctx.fillStyle = '#a9e4f2'; ctx.fillRect(mp.x - 22, mp.y - 30, 44, 26);
+        ctx.strokeStyle = '#12293b'; ctx.lineWidth = 1.2;
+        for (i = 1; i < 4; i++) {
+          ctx.beginPath(); ctx.moveTo(mp.x - 22 + i * 11, mp.y - 30);
+          ctx.lineTo(mp.x - 22 + i * 11, mp.y - 4); ctx.stroke();
+        }
+        ctx.strokeStyle = '#5f9fb5'; ctx.lineWidth = 2;
+        ctx.strokeRect(mp.x - 22, mp.y - 30, 44, 26);
         ctx.globalAlpha = 1;
         break;
-      case 'etched':
-        Park.draw.waferDisc(ctx, x, y, z + 0.05, 0.72, '#6f8497');
-        Park.draw.dieGrid(ctx, x, y, z + 0.07, 5, false);
+
+      case 'pod':                        /* sealed in a clean carrier */
+        Park.draw.waferDisc(ctx, x, y, z, R, '#e9f1f8');
+        Iso.box(ctx, { x: x - 0.75, y: y - 0.62, z: z + 0.02, w: 1.5, d: 1.24, h: 0.62,
+                       color: '#bfe6f2', alpha: 0.55 });
         break;
-      case 'doped':
-        Park.draw.waferDisc(ctx, x, y, z + 0.05, 0.72, '#8f6fc0');
-        Park.draw.dieGrid(ctx, x, y, z + 0.07, 5, false);
+
+      case 'coated':                     /* a fresh film over the whole surface */
+        top = waferStack(ctx, x, y, z, s.layers);
+        ctx.globalAlpha = 0.55 + 0.35 * Math.min(1, s.flash * 2);
+        Park.draw.waferDisc(ctx, x, y, top, R, '#7fd4e8');
+        ctx.globalAlpha = 1;
         break;
-      case 'wired':
-        Park.draw.waferDisc(ctx, x, y, z + 0.05, 0.72, '#c9793f');
-        Park.draw.dieGrid(ctx, x, y, z + 0.07, 5, false);
+
+      case 'resist':
+        top = waferStack(ctx, x, y, z, s.layers);
+        Park.draw.waferDisc(ctx, x, y, top, R, '#3fb5a0');
         break;
-      case 'stack':
-        /* one visible plate per completed layer */
-        for (i = 0; i < Math.min(6, lap); i++) {
-          Park.draw.waferDisc(ctx, x, y, z + 0.05 + i * 0.10, 0.72,
-            i % 2 ? '#8fd0e8' : '#c9793f');
-        }
+
+      case 'exposed':                    /* bright bands where the light landed */
+        top = waferStack(ctx, x, y, z, s.layers);
+        Park.draw.waferDisc(ctx, x, y, top, R, '#3fb5a0');
+        ctx.globalAlpha = 0.45 + 0.45 * Math.abs(Math.sin(t * 5));
+        bars(ctx, x, y, top + 0.01, '#ffffff', 4, 0.17);
+        ctx.globalAlpha = 1;
         break;
+
+      case 'etched':                     /* trenches cut down into the layer */
+        top = waferStack(ctx, x, y, z, s.layers);
+        Park.draw.waferDisc(ctx, x, y, top, R, '#8fa2b5');
+        bars(ctx, x, y, top + 0.01, '#43525f', 4, 0.16);
+        break;
+
+      case 'doped':                      /* implanted atoms sitting in the gaps */
+        top = waferStack(ctx, x, y, z, s.layers);
+        Park.draw.waferDisc(ctx, x, y, top, R, '#8fa2b5');
+        bars(ctx, x, y, top + 0.01, '#a25fd8', 4, 0.16);
+        break;
+
+      case 'wired':                      /* the trenches filled with copper */
+        top = waferStack(ctx, x, y, z, s.layers);
+        Park.draw.waferDisc(ctx, x, y, top, R, '#8fa2b5');
+        bars(ctx, x, y, top + 0.01, '#c9793f', 4, 0.16);
+        break;
+
+      case 'stack':                      /* the layer just finished, now part of the stack */
+        waferStack(ctx, x, y, z, s.layers);
+        break;
+
       case 'tested':
-        Park.draw.waferDisc(ctx, x, y, z + 0.05, 0.78, '#7f93a8');
-        Park.draw.dieGrid(ctx, x, y, z + 0.07, 7, true);
+        top = waferStack(ctx, x, y, z, s.layers);
+        dieSplit(ctx, x, y, top + 0.01, 1.0, true);
         break;
-      case 'chips':
-        Park.draw.chipTray(ctx, x, y, z + 0.05);
+
+      case 'dies':                       /* the same grid, now visibly cut apart */
+        dieSplit(ctx, x, y, z + 0.04, 1.12, false);
         break;
+
       case 'packaged':
         for (i = 0; i < 4; i++) {
-          Iso.box(ctx, { x: x - 0.5 + (i % 2) * 0.55, y: y - 0.4 + ((i / 2) | 0) * 0.5,
-                         z: z, w: 0.45, d: 0.4, h: 0.16, color: '#2f3945', top: '#3fb5a0' });
+          Iso.box(ctx, { x: x - 0.56 + (i % 2) * 0.6, y: y - 0.46 + ((i / 2) | 0) * 0.54,
+                         z: z, w: 0.5, d: 0.44, h: 0.18, color: '#2f3945', top: '#3fb5a0' });
         }
         break;
+
       case 'boxed':
-        Iso.box(ctx, { x: x - 0.55, y: y - 0.45, z: z, w: 1.1, d: 0.9, h: 0.5, color: '#c8a06a' });
-        Iso.box(ctx, { x: x - 0.4, y: y - 0.3, z: z + 0.5, w: 0.8, d: 0.6, h: 0.35, color: '#d2ac76' });
+        Iso.box(ctx, { x: x - 0.6, y: y - 0.5, z: z, w: 1.2, d: 1.0, h: 0.55, color: '#c8a06a' });
+        Iso.box(ctx, { x: x - 0.42, y: y - 0.32, z: z + 0.55, w: 0.84, d: 0.64, h: 0.36, color: '#d2ac76' });
         break;
     }
   }
 
   function drawCart(ctx, p, s, t) {
-    Iso.shadow(ctx, p.x, p.y, 1.0);
+    Iso.shadow(ctx, p.x, p.y, 1.1);
     var hx = p.dx || 1, hy = p.dy || 0;
     /* chassis and a bright tycoon-yellow body */
-    Iso.orientedBox(ctx, { x: p.x, y: p.y, hx: hx, hy: hy, len: 2.5, wid: 1.5, z: p.z, h: 0.18, color: '#2b3038' });
-    Iso.orientedBox(ctx, { x: p.x, y: p.y, hx: hx, hy: hy, len: 2.2, wid: 1.3, z: p.z + 0.18, h: 0.32, color: '#e8b23c' });
-    /* a driver up front */
-    Park.draw.guest(ctx, p.x + hx * 0.75, p.y + hy * 0.75, p.z + 0.5, '#3f7fd4', '#ffffff', t * 6);
-    drawCargo(ctx, p.x - hx * 0.35, p.y - hy * 0.35, p.z + 0.5, s.cargo, t, s.lap);
+    Iso.orientedBox(ctx, { x: p.x, y: p.y, hx: hx, hy: hy, len: 2.7, wid: 1.6, z: p.z, h: 0.18, color: '#2b3038' });
+    Iso.orientedBox(ctx, { x: p.x, y: p.y, hx: hx, hy: hy, len: 2.4, wid: 1.4, z: p.z + 0.18, h: 0.32, color: '#e8b23c' });
+    Park.draw.guest(ctx, p.x + hx * 0.82, p.y + hy * 0.82, p.z + 0.5, '#3f7fd4', '#ffffff', t * 6);
+
+    /* A short pop as the cargo changes, so the eye is pulled to it at the
+       moment the material actually becomes something else. */
+    var cx = p.x - hx * 0.38, cy = p.y - hy * 0.38, cz = p.z + 0.5;
+    var pop = 1 + 0.38 * s.flash * s.flash;
+    if (pop > 1.001) {
+      var a = Iso.project(cx, cy, cz);
+      ctx.save();
+      ctx.translate(a.x, a.y); ctx.scale(pop, pop); ctx.translate(-a.x, -a.y);
+      drawCargo(ctx, cx, cy, cz, s, t);
+      ctx.restore();
+    } else {
+      drawCargo(ctx, cx, cy, cz, s, t);
+    }
+  }
+
+  /* A name tag riding above the cart. Drawn in screen space with the other
+     signage so it stays upright and legible at any zoom. */
+  function drawCartTag(ctx, cam, p, s) {
+    var text = Park.cargoLabels[s.cargo];
+    if (!text || cam.scale < 0.35) return;
+    if (Park.loopCargo[s.cargo] && s.layers > 0) text += ' · layer ' + s.layers;
+
+    var w = Iso.project(p.x, p.y, p.z + 1.9);
+    var sx = w.x * cam.scale + cam.ox;
+    var sy = w.y * cam.scale + cam.oy;
+
+    ctx.save();
+    ctx.font = 'bold 12.5px "Trebuchet MS", Verdana, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    var tw = ctx.measureText(text).width + 20;
+
+    ctx.fillStyle = '#22303f';
+    ctx.strokeStyle = '#f2c14e';
+    ctx.lineWidth = 2;
+    roundRect(ctx, sx - tw / 2, sy - 11, tw, 22, 5);
+    ctx.fill(); ctx.stroke();
+    /* little pointer down toward the cart */
+    ctx.beginPath();
+    ctx.moveTo(sx - 5, sy + 11); ctx.lineTo(sx + 5, sy + 11); ctx.lineTo(sx, sy + 17);
+    ctx.closePath(); ctx.fillStyle = '#22303f'; ctx.fill();
+
+    ctx.fillStyle = '#ffe9a8';
+    ctx.fillText(text, sx, sy + 1);
+    ctx.restore();
   }
 
   /* ---- frame ------------------------------------------------------------- */
@@ -315,6 +450,7 @@
     ctx.restore();
 
     if (showLabels) drawLabels(ctx, cam, activeId);
+    drawCartTag(ctx, cam, cp, s);
   }
 
   /* Signs are drawn in screen space so they stay upright and readable at any
