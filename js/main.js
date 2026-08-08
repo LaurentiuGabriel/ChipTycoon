@@ -263,7 +263,10 @@
   function frame(now) {
     /* schedule first, so one bad frame cannot freeze the whole park */
     requestAnimationFrame(frame);
-    var dt = Math.min(0.05, (now - last) / 1000);
+    /* Clamped at both ends. The first callback can carry a timestamp from
+       before boot, and a negative dt would wind the animation clock backwards
+       and take every time driven painter with it. */
+    var dt = Math.max(0, Math.min(0.05, (now - last) / 1000));
     last = now;
     clock += dt;
 

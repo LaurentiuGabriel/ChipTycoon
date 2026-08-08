@@ -93,15 +93,27 @@
     [31, 39],      //  5 dicing saw
     [40, 39],      //  6 packaging
     [49, 39],      //  7 shipping gate
-    [56, 39]       //  8
+    [56, 39]       //  8 loading dock
   ]);
 
-  /* The empty cart drives back round the outside of the park for the next batch. */
+  /* The delivery run. The chips leave the fab on a lorry and are driven to the
+     data centre off the east side of the park, which is where they go to work. */
+  var DELIVER = makeRoute([
+    [56, 39],      //  0 out of the loading dock
+    [62, 38.5],
+    [66, 35.5],
+    [66.5, 31],
+    [64.5, 28.5],
+    [59.2, 27.6]   //  5 the data centre bay
+  ]);
+
+  /* The empty lorry drives back round the outside of the park for the next batch. */
   var RETURN = makeRoute([
-    [56, 39], [57, 43], [52, 46], [6, 46], [1, 42], [1, 14], [-1, 11.5], [-1, 10]
+    [59.2, 27.6], [64.5, 28.5], [66.5, 31], [66, 35.5], [64, 42], [59, 47],
+    [6, 47], [1, 42], [1, 14], [-1, 11.5], [-1, 10]
   ]);
 
-  var ROUTES = { intake: INTAKE, loop: LOOP, exit: EXIT, ret: RETURN };
+  var ROUTES = { intake: INTAKE, loop: LOOP, exit: EXIT, deliver: DELIVER, ret: RETURN };
 
   /* `dwell` is the pause once you have already read a stop. The much longer
      first visit is derived from how much there is to read; see readSeconds. */
@@ -125,9 +137,11 @@
     ],
     exit: [
       station(EXIT, 4, 'test', 1.6), station(EXIT, 5, 'dice', 1.5),
-      station(EXIT, 6, 'pack', 1.5), station(EXIT, 7, 'ship', 2.0)
+      station(EXIT, 6, 'pack', 1.5), station(EXIT, 7, 'ship', 2.0),
+      station(EXIT, 8, 'dock', 1.8)
     ],
-    ret: [ station(RETURN, 4, 'newbatch', 1.0) ]
+    deliver: [ station(DELIVER, 5, 'datacenter', 2.6) ],
+    ret: [ station(RETURN, 7, 'newbatch', 1.0) ]
   };
 
   /* ---- palette ----------------------------------------------------------- */
@@ -155,7 +169,7 @@
     hot:      '#ff9a3c'
   };
 
-  /* ---- the twenty stops -------------------------------------------------- */
+  /* ---- the twenty two stops -------------------------------------------------- */
 
   var STOPS = [
     { id: 'sand', name: 'Sand Pit', act: 1, tag: 'Raw material', x: 6, y: 10, r: 5,
@@ -255,8 +269,18 @@
 
     { id: 'ship', name: 'Shipping Gate', act: 4, tag: 'Finishing', x: 49, y: 39, r: 5,
       short: 'Final exam, sorted by grade, then out of the gate.',
-      body: 'This time each chip is tested hot, cold and at full speed, because a chip that works on a calm bench may fail in a warm laptop. The results decide the grade: the fastest and most reliable are sold at the top price and the rest fill the cheaper models. Then they go into trays and reels, onto a plane, and into a factory that solders them onto circuit boards.',
-      tip: 'That is the whole ride. Sand in at stop one, a thinking machine out at stop twenty, about three months and several hundred careful steps later.' }
+      body: 'This time each chip is tested hot, cold and at full speed, because a chip that works on a calm bench may fail in a warm laptop. The results decide the grade: the fastest and most reliable are sold at the top price and the rest fill the cheaper models. Then they are counted into trays and reels, sealed up, and wheeled out to the loading dock next door.',
+      tip: 'Sand went in at stop one and a working chip comes out of the gate here, about three months and several hundred careful steps later. Two stops to go: watch where it actually ends up.' },
+
+    { id: 'dock', name: 'Loading Dock', act: 5, tag: 'Delivery', x: 56.6, y: 42.2, r: 5,
+      short: 'The finished chips are stacked onto a lorry.',
+      body: 'The sealed trays go into moisture proof bags, the bags into boxes, the boxes onto a pallet, and the pallet is strapped down and driven onto a lorry. Every box carries a code that leads back to the wafer it was cut from, so if a fault turns up months later the whole batch can be traced. Most loads do not go straight to a shop. They go to a board factory, where the chips are soldered onto circuit boards, and those boards are bolted into servers.',
+      tip: 'Chips are small and expensive, so one lorry can be carrying more value than every building in this park put together.' },
+
+    { id: 'datacenter', name: 'Data Centre', act: 5, tag: 'Delivery', x: 56, y: 24, r: 6,
+      short: 'The chips are racked up, powered on, and put to work.',
+      body: 'The servers slide into racks, the racks fill halls like this one, and the doors close. Power comes in at one end and heat is pulled out at the other, because a full rack throws out as much heat as a row of electric heaters. From here the chip you followed spends the next few years answering searches, streaming video, training models and serving the pages you read. Every lap the cart drove round that ring is one layer of what is now switching billions of times a second in here.',
+      tip: 'That is the whole ride. A scoop of quartz sand at stop one, a hall full of thinking machines at stop twenty two, and then the lorry drives back to the fab and the next wafer starts.' }
   ];
 
   var STOP_BY_ID = {};
@@ -277,7 +301,7 @@
 
   /* BOUNDS is what the camera frames. GROUND is drawn much larger so grass
      always fills the viewport instead of the park floating on a backdrop. */
-  var BOUNDS = { x0: -4, y0: 2, x1: 60, y1: 48 };
+  var BOUNDS = { x0: -4, y0: 2, x1: 69, y1: 49 };
   var GROUND = { x0: -420, y0: -400, x1: 470, y1: 460 };
 
   /* Paved lots under each cluster of buildings. */
@@ -302,6 +326,10 @@
     { x: 26.6, y: 40.4, w: 8.6, d: 4.4, c: C.floor },
     { x: 35.6, y: 40.4, w: 8.6, d: 4.4, c: C.floor },
     { x: 44.6, y: 40.4, w: 9.0, d: 4.4, c: C.slab },
+    { x: 53.6, y: 40.4, w: 5.8, d: 4.4, c: C.slab },
+    /* the data centre off the east side, and the yard its lorries park in */
+    { x: 50.2, y: 18.2, w: 10.4, d: 7.4, c: C.floor },
+    { x: 50.6, y: 25.6, w: 11.4, d: 4.4, c: C.slab },
     /* the plaza inside the loop */
     { x: 20, y: 25, w: 24, d: 6.4, c: C.path }
   ];
@@ -712,7 +740,131 @@
     truck(ctx, 49.2, 43.0, C.blue);
   }});
 
+  /* --- act 5: out of the fab and into service ----------------------------- */
+
+  add({ id: 'dock', x: 53.6, y: 40.0, w: 5.8, d: 4.8, draw: function (ctx, b, t) {
+    hall(ctx, 53.9, 40.4, 2.4, 2.2, 1.4, '#e8eef4', C.brick);
+    /* pallets waiting their turn, and the lorry that takes them */
+    palletStack(ctx, 58.3, 40.9, 0, 3);
+    palletStack(ctx, 58.6, 42.3, 0, 2);
+    truck(ctx, 54.1, 43.3, C.red);
+    /* a forklift walking one pallet out to the loading line and back */
+    var k = Math.sin(t * 0.55) * 0.5 + 0.5;
+    var fx = 57.4 - k * 1.5, fy = 41.7;
+    Iso.box(ctx, { x: fx - 0.62, y: fy + 0.05, w: 0.12, d: 0.6, h: 1.2, color: '#5f6b78' });
+    if (k > 0.06) palletStack(ctx, fx - 1.15, fy + 0.02, 0.3, 1);
+    Iso.box(ctx, { x: fx, y: fy, w: 0.85, d: 0.7, h: 0.5, color: '#e0a94f' });
+    Iso.box(ctx, { x: fx + 0.16, y: fy + 0.08, z: 0.5, w: 0.46, d: 0.5, h: 0.46, color: '#3a4450' });
+  }});
+
+  add({ id: 'datacenter', x: 50.6, y: 18.6, w: 9.6, d: 6.6, draw: function (ctx, b, t, W) {
+    var X = 51, Y = 19, Wd = 8.8, D = 5.6, H = 3.4;
+    var face = Y + D;                       // the wall the lorry unloads into
+    var racks = (W && W.racks) || 0;
+    var full = Math.min(6, racks * 2);      // rack halls lit, two per delivery
+    var arriving = W && W.stage === 'datacenter';
+
+    Iso.box(ctx, { x: X, y: Y, w: Wd, d: D, h: H, color: '#dfe6ec', top: '#c3ccd6' });
+    /* parapet and the chillers that carry the heat away */
+    Iso.box(ctx, { x: X, y: Y, z: H, w: Wd, d: D, h: 0.22, color: '#aeb8c2' });
+    for (var f = 0; f < 3; f++) fan(ctx, X + 1.6 + f * 2.6, Y + 2.0, H + 0.24, t * (2.2 + f * 0.4));
+    Iso.box(ctx, { x: X + 0.5, y: Y + 4.2, z: H + 0.22, w: 1.4, d: 0.9, h: 0.7, color: '#9fb0c0' });
+
+    /* the rack halls, seen through the long window on the front wall */
+    for (var i = 0; i < 6; i++) {
+      var x0 = X + 0.55 + i * 1.0, x1 = x0 + 0.78;
+      ctx.fillStyle = '#1b2733';
+      faceRect(ctx, face, x0, 0.7, x1, 2.5);
+      var on = i < full;
+      if (on && arriving && i >= full - 2) on = W.stageT > 0.9 + (i - (full - 2)) * 0.9;
+      for (var r = 0; r < 5; r++) {
+        var z0 = 0.82 + r * 0.34;
+        ctx.fillStyle = on ? (Math.sin(t * 6 + i * 2 + r) > -0.3 ? '#4fe0b8' : '#1f7f6a') : '#2b3a48';
+        faceRect(ctx, face, x0 + 0.08, z0, x1 - 0.08, z0 + 0.16);
+      }
+    }
+    ctx.strokeStyle = 'rgba(30,42,54,0.5)'; ctx.lineWidth = 1;
+    Iso.stroke(ctx, [Iso.project(X + 0.5, face, 2.6), Iso.project(X + 6.4, face, 2.6),
+                     Iso.project(X + 6.4, face, 0.6), Iso.project(X + 0.5, face, 0.6)], true);
+
+    /* the goods bay the pallets go through */
+    ctx.fillStyle = '#2f3945';
+    faceRect(ctx, face, X + 7.0, 0, X + 8.4, 2.2);
+    ctx.fillStyle = '#7f8b98';
+    faceRect(ctx, face, X + 7.0, 1.7, X + 8.4, 2.2);
+    ctx.fillStyle = '#f2c14e';
+    faceRect(ctx, face, X + 7.0, 0, X + 8.4, 0.08);
+
+    /* the standby generators and transformers that keep the halls fed */
+    for (var g = 0; g < 3; g++) {
+      Iso.box(ctx, { x: 51.2 + g * 1.5, y: 26.6, w: 1.1, d: 1.3, h: 0.9, color: '#8e9aa8' });
+      Iso.box(ctx, { x: 51.3 + g * 1.5, y: 26.7, z: 0.9, w: 0.9, d: 1.1, h: 0.16, color: '#6b7784' });
+      Iso.cylinder(ctx, { x: 51.45 + g * 1.5, y: 26.5, r: 0.13, h: 1.5, color: '#5f6b78', edge: false });
+    }
+
+    /* the pallets coming off the lorry while it is docked */
+    if (arriving) {
+      for (var c = 0; c < 3; c++) {
+        var k = (W.stageT * 0.55 - c * 0.3) % 1.6;
+        if (k < 0 || k > 1) continue;
+        palletStack(ctx, 59.0 - k * 0.5, 27.3 - k * 2.5, 0.32, 2);
+      }
+    }
+
+    /* Kept to one short word: the board is drawn at a fixed size in screen space,
+       so a long one would swamp the wall once the camera pulls back. */
+    sign(ctx, X + 7.7, face, H - 0.1, full > 0 ? 'ONLINE' : 'IDLE',
+         full > 0 ? '#4fe0b8' : '#6b7784');
+  }});
+
   /* --- shared small painters --------------------------------------------- */
+
+  /* A rectangle painted on the wall that faces the camera at y = yFace. */
+  function faceRect(ctx, yFace, x0, z0, x1, z1) {
+    Iso.poly(ctx, [Iso.project(x0, yFace, z1), Iso.project(x1, yFace, z1),
+                   Iso.project(x1, yFace, z0), Iso.project(x0, yFace, z0)]);
+  }
+
+  function fan(ctx, x, y, z, a) {
+    Iso.box(ctx, { x: x - 0.7, y: y - 0.7, z: z, w: 1.4, d: 1.4, h: 0.34, color: '#8e9aa8' });
+    var p = Iso.project(x, y, z + 0.34);
+    ctx.fillStyle = '#2f3945';
+    ctx.beginPath(); ctx.ellipse(p.x, p.y, 17, 9, 0, 0, 6.2832); ctx.fill();
+    ctx.strokeStyle = '#cfd7de'; ctx.lineWidth = 2.4;
+    for (var i = 0; i < 3; i++) {
+      var th = a + i * 2.094;
+      ctx.beginPath();
+      ctx.moveTo(p.x, p.y);
+      ctx.lineTo(p.x + Math.cos(th) * 15, p.y + Math.sin(th) * 8);
+      ctx.stroke();
+    }
+  }
+
+  function sign(ctx, x, yFace, z, text, colour) {
+    var p = Iso.project(x, yFace, z);
+    ctx.font = 'bold 13px "Trebuchet MS", Verdana, sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    var w = ctx.measureText(text).width + 16;
+    ctx.fillStyle = '#22303f';
+    ctx.fillRect(p.x - w / 2, p.y - 11, w, 22);
+    ctx.strokeStyle = colour; ctx.lineWidth = 2;
+    ctx.strokeRect(p.x - w / 2, p.y - 11, w, 22);
+    ctx.fillStyle = colour;
+    ctx.fillText(text, p.x, p.y + 1);
+    ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  }
+
+  /* Boxed chips on a wooden pallet, the unit everything ships in. */
+  function palletStack(ctx, x, y, z, rows) {
+    z = z || 0;
+    Iso.box(ctx, { x: x - 0.5, y: y - 0.42, z: z, w: 1.0, d: 0.84, h: 0.14, color: C.wood });
+    for (var r = 0; r < rows; r++) {
+      for (var i = 0; i < 2; i++) {
+        Iso.box(ctx, { x: x - 0.46 + i * 0.46, y: y - 0.38, z: z + 0.14 + r * 0.34,
+                       w: 0.44, d: 0.76, h: 0.34, color: r % 2 ? '#d2ac76' : '#c8a06a' });
+      }
+    }
+  }
 
   function dieGrid(ctx, cx, cy, z, n, marked) {
     var cell = 0.30, half = n / 2;
@@ -745,6 +897,29 @@
     Iso.box(ctx, { x: x, y: y, w: 3.4, d: 1.5, h: 0.2, color: '#2b3038' });
     Iso.box(ctx, { x: x + 0.1, y: y + 0.2, z: 0.2, w: 2.2, d: 1.1, h: 0.85, color: c });
     Iso.box(ctx, { x: x + 2.35, y: y + 0.2, z: 0.2, w: 1.0, d: 1.1, h: 1.15, color: Iso.mix(c, '#ffffff', 0.18) });
+  }
+
+  /* The delivery lorry, turned to face wherever it is driving. Same build as the
+     cart, a chassis with a body on it, so whatever it hauls stays visible on top.
+     LORRY_BED is where that load sits. */
+  var LORRY_BED = 0.66;     // top of the load bed, where the pallet sits
+  var LORRY_LOAD = 0.62;    // how far behind centre that bed is
+
+  function lorry(ctx, x, y, z, hx, hy, c) {
+    var bx = x - hx * LORRY_LOAD, by = y - hy * LORRY_LOAD;
+    Iso.orientedBox(ctx, { x: x, y: y, hx: hx, hy: hy, len: 3.8, wid: 1.6,
+                           z: z, h: 0.2, color: '#2b3038' });
+    Iso.orientedBox(ctx, { x: bx, y: by, hx: hx, hy: hy, len: 2.3, wid: 1.42,
+                           z: z + 0.2, h: 0.46, color: '#9fb0c0' });
+    /* headboard, so the load reads as being carried rather than balanced */
+    Iso.orientedBox(ctx, { x: x + hx * 0.62, y: y + hy * 0.62, hx: hx, hy: hy,
+                           len: 0.16, wid: 1.42, z: z + LORRY_BED, h: 0.6, color: '#7f8b98' });
+    /* cab last: it is the tallest part and belongs on top of the joins */
+    Iso.orientedBox(ctx, { x: x + hx * 1.25, y: y + hy * 1.25, hx: hx, hy: hy,
+                           len: 1.15, wid: 1.45, z: z + 0.2, h: 1.15, color: c });
+    Iso.orientedBox(ctx, { x: x + hx * 1.25, y: y + hy * 1.25, hx: hx, hy: hy,
+                           len: 1.18, wid: 1.48, z: z + 1.05, h: 0.3,
+                           color: Iso.mix(c, '#ffffff', 0.55) });
   }
 
   /* ---- scenery ----------------------------------------------------------- */
@@ -844,7 +1019,9 @@
     tested:    'tested, failures marked',
     dies:      'cut into dies',
     packaged:  'packaged chips',
-    boxed:     'boxed for shipping'
+    boxed:     'boxed for shipping',
+    pallet:    'palletised, on the lorry',
+    delivered: 'chips delivered'
   };
 
   /* Cargo kinds that live inside the lithography ring, so the tag can add the
@@ -860,7 +1037,9 @@
     stops: STOPS, stopById: STOP_BY_ID,
     buildings: B,
     guests: GUESTS,
+    lorryBed: LORRY_BED, lorryLoad: LORRY_LOAD,
     draw: { tree: tree, bush: bush, lamp: lamp, bench: bench, guest: guest,
-            truck: truck, waferDisc: waferDisc, dieGrid: dieGrid, chipTray: chipTray }
+            truck: truck, lorry: lorry, waferDisc: waferDisc, dieGrid: dieGrid,
+            chipTray: chipTray, palletStack: palletStack }
   };
 })(window);

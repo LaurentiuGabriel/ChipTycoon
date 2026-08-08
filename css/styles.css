@@ -19,6 +19,7 @@
   --act2: #6d7fa8;
   --act3: #4a8f7c;
   --act4: #9a5d8f;
+  --act5: #a8563f;
 }
 
 * { box-sizing: border-box; }
@@ -153,6 +154,7 @@ html, body {
 .chip.act2 { background: var(--act2); }
 .chip.act3 { background: var(--act3); }
 .chip.act4 { background: var(--act4); }
+.chip.act5 { background: var(--act5); }
 
 .guide h2 { margin: 2px 0 8px; font-size: 25px; line-height: 1.15; }
 .lede {
@@ -219,6 +221,7 @@ html, body {
 .stop-chip.act2 i { background: var(--act2); }
 .stop-chip.act3 i { background: var(--act3); }
 .stop-chip.act4 i { background: var(--act4); }
+.stop-chip.act5 i { background: var(--act5); }
 .stop-chip.seen { background: linear-gradient(#eef7e6, #cfe4bd); }
 .stop-chip.on {
   background: linear-gradient(#ffe08a, var(--gold));

@@ -101,13 +101,14 @@
   }
 
   var ACT_NAME = { 1: 'Act 1 · Sand to wafer', 2: 'Act 2 · Drawing the plan',
-                   3: 'Act 3 · Printing the chip', 4: 'Act 4 · Chips out the gate' };
+                   3: 'Act 3 · Printing the chip', 4: 'Act 4 · Chips out the gate',
+                   5: 'Act 5 · Delivered and put to work' };
 
   function render(stop) {
     if (lastPainted === stop.id && !pinned) return;
     lastPainted = stop.id;
     var n = Park.stops.indexOf(stop) + 1;
-    el.chip.textContent = 'Stop ' + n + ' of 20';
+    el.chip.textContent = 'Stop ' + n + ' of ' + Park.stops.length;
     el.chip.className = 'chip act' + stop.act;
     el.name.textContent = stop.name;
     el.short.textContent = stop.short;
@@ -151,7 +152,7 @@
       ? 'reading stop · press Space to hold it here'
       : 'moving on';
 
-    el.hudStop.textContent = s.seenCount + ' / 20';
+    el.hudStop.textContent = s.seenCount + ' / ' + Park.stops.length;
     el.hudLayer.textContent = s.lap + ' of ' + s.laps + ' shown';
     el.hudBatch.textContent = '#' + s.batch;
     el.progressBar.style.width = (Tour.progress() * 100).toFixed(1) + '%';

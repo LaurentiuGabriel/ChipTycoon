@@ -1,8 +1,9 @@
 /* tour.js: the state machine that drives one wafer through the whole park.
  *
  * A "batch" is one complete run: in at the sand pit, round the lithography ring
- * once per layer, out at the shipping gate, then the empty cart drives back for
- * the next one. The cart's cargo is the wafer, and it changes at every stop. */
+ * once per layer, out at the shipping gate, onto a lorry at the loading dock and
+ * away to the data centre, then the empty lorry drives back for the next one.
+ * The cart's cargo is the wafer, and it changes at every stop. */
 (function (global) {
   'use strict';
 
@@ -21,7 +22,9 @@
     cleanroom: 'pod', layer: 'coated', resist: 'resist', litho: 'exposed',
     etch: 'etched', dope: 'doped', wiring: 'wired', loopct: 'stack',
     test: 'tested', dice: 'dies', pack: 'packaged', ship: 'boxed',
-    newbatch: 'empty'
+    dock: 'pallet', datacenter: 'delivered'
+    /* nothing for newbatch: the lorry stays visibly empty until startBatch
+       hands a fresh cart back to the sand pit */
   };
 
   var state = {
@@ -38,6 +41,8 @@
     laps: 4,                   // laps actually driven; a real chip runs ~60
     layersReal: 60,
     batch: 1,
+
+    racks: 0,                  // deliveries made, drawn as lit halls in the data centre
 
     fastForward: false,
     tourDone: false,
@@ -77,6 +82,7 @@
     state.dwellTotal = 0;
     state.fastForward = false;
     state.flash = 0;
+    state.racks = 0;
     countSeen();
     startBatch();
     emit('reset');
@@ -112,10 +118,11 @@
         state.fastForward = true;
       }
     }
-    if (st.id === 'ship') {
-      /* one full pass has now explained every stop */
+    if (st.id === 'datacenter') {
+      /* the last stop: one full pass has now explained every one of them */
       tour.done = true;
       state.tourDone = true;
+      state.racks++;
     }
     if (st.id === 'newbatch') state.batch++;
     emit('stage', st.id);
@@ -141,6 +148,11 @@
       cart.dist = 0;
       cart.stationIdx = 0;
     } else if (cart.routeName === 'exit') {
+      /* off the loading dock and onto the road: the cart becomes a lorry here */
+      cart.routeName = 'deliver';
+      cart.dist = 0;
+      cart.stationIdx = 0;
+    } else if (cart.routeName === 'deliver') {
       cart.routeName = 'ret';
       cart.dist = 0;
       cart.stationIdx = 0;
@@ -210,7 +222,7 @@
     return smoothAt(Park.routes[cart.routeName], cart.dist, 0.9);
   }
 
-  /* Where the cart is, as a fraction of the whole twenty stop journey. */
+  /* Where the cart is, as a fraction of the whole twenty two stop journey. */
   function progress() {
     var order = Park.stops.map(function (s) { return s.id; });
     var i = order.indexOf(state.stage);

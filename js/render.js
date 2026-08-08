@@ -325,10 +325,46 @@
         Iso.box(ctx, { x: x - 0.6, y: y - 0.5, z: z, w: 1.2, d: 1.0, h: 0.55, color: '#c8a06a' });
         Iso.box(ctx, { x: x - 0.42, y: y - 0.32, z: z + 0.55, w: 0.84, d: 0.64, h: 0.36, color: '#d2ac76' });
         break;
+
+      case 'pallet':                     /* strapped down for the road */
+        Park.draw.palletStack(ctx, x, y, z, 3);
+        ctx.fillStyle = 'rgba(40,30,18,0.55)';
+        Iso.ribbon(ctx, x - 0.52, y - 0.1, x + 0.52, y - 0.1, 0.9, z + 1.17);
+        break;
+
+      case 'delivered':                  /* the empty pallet riding home */
+        Park.draw.palletStack(ctx, x, y, z, 0);
+        break;
+    }
+  }
+
+  /* The cart hauls the wafer round the fab; once the chips are palletised at the
+     loading dock the same drawable becomes the lorry that delivers them. Reading
+     the route rather than a flag keeps this correct after any jump. */
+  function hauling() {
+    var r = Tour.cart.routeName;
+    return r === 'deliver' || r === 'ret';
+  }
+
+  function drawLorry(ctx, p, s, t) {
+    Iso.shadow(ctx, p.x, p.y, 1.7);
+    var hx = p.dx || 1, hy = p.dy || 0;
+    Park.draw.lorry(ctx, p.x, p.y, p.z, hx, hy, '#3f7fd4');
+    var cx = p.x - hx * Park.lorryLoad, cy = p.y - hy * Park.lorryLoad, cz = p.z + Park.lorryBed;
+    var pop = 1 + 0.38 * s.flash * s.flash;
+    if (pop > 1.001) {
+      var a = Iso.project(cx, cy, cz);
+      ctx.save();
+      ctx.translate(a.x, a.y); ctx.scale(pop, pop); ctx.translate(-a.x, -a.y);
+      drawCargo(ctx, cx, cy, cz, s, t);
+      ctx.restore();
+    } else {
+      drawCargo(ctx, cx, cy, cz, s, t);
     }
   }
 
   function drawCart(ctx, p, s, t) {
+    if (hauling()) { drawLorry(ctx, p, s, t); return; }
     Iso.shadow(ctx, p.x, p.y, 1.1);
     var hx = p.dx || 1, hy = p.dy || 0;
     /* chassis and a bright tycoon-yellow body */

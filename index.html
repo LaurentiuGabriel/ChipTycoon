@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>ChipTycoon: How a Computer Chip Is Made</title>
-<meta name="description" content="A guided isometric tour of a chip factory. A cart carries one wafer from a pile of sand to a finished chip, stopping at all twenty stages along the way." />
+<meta name="description" content="A guided isometric tour of a chip factory. A cart carries one wafer from a pile of sand to a finished chip, then a lorry delivers the chips to a data centre, stopping at all twenty two stages along the way." />
 <link rel="stylesheet" href="css/styles.css" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%232f3945'/%3E%3Crect x='9' y='9' width='14' height='14' rx='2' fill='%233fb5a0'/%3E%3C/svg%3E" />
 </head>
@@ -27,7 +27,7 @@
 </header>
 
 <div class="hud" id="hud">
-  <div class="hud-item"><span class="k">Stops seen</span><span class="v" id="ui-hudStop">0 / 20</span></div>
+  <div class="hud-item"><span class="k">Stops seen</span><span class="v" id="ui-hudStop">0 / 22</span></div>
   <div class="hud-item"><span class="k">Layer</span><span class="v" id="ui-hudLayer">1 of 4</span></div>
   <div class="hud-item"><span class="k">Wafer</span><span class="v" id="ui-hudBatch">#1</span></div>
   <div class="hud-note" id="ui-hudNote"></div>
@@ -50,7 +50,7 @@
 
   <div class="stop-head">
     <div class="eyebrow">
-      <span class="chip act1" id="ui-chip">Stop 1 of 20</span>
+      <span class="chip act1" id="ui-chip">Stop 1 of 22</span>
     </div>
     <h2 id="ui-name">Sand Pit</h2>
     <p class="lede" id="ui-short"></p>
@@ -82,7 +82,10 @@
         white polysilicon, a silver crystal, a stack of slices, a mirror-flat disc, then a
         coloured layer that is coated, printed, etched, doped and wired. Each lap of the ring
         adds another plate to the stack, so you can watch the chip being built up one layer at
-        a time before the saw cuts it into separate dies.</p>
+        a time before the saw cuts it into separate dies. At the loading dock the cart hands
+        the boxed chips to a lorry, which drives them out to the data centre on the east side
+        of the park. Another hall of racks lights up with every delivery, and then the lorry
+        drives back to the gate and the next wafer starts.</p>
     </section>
   </div>
 </aside>
@@ -115,7 +118,10 @@
     <p>ChipTycoon is a working chip factory laid out as a theme park. A cart carries one
       silicon wafer along the roads and stops at each of the twenty buildings that turn
       ordinary sand into a computer chip. The cargo on the cart is the wafer itself, and it
-      visibly changes at every stop, so you can always see what stage the material is at.</p>
+      visibly changes at every stop, so you can always see what stage the material is at.
+      Two more stops follow the chips out of the gate: they are palletised onto a lorry at
+      the loading dock and delivered to the data centre, where they are racked up and
+      switched on. Then the lorry drives back and the whole thing runs again.</p>
 
     <h2>Why the middle is a ring</h2>
     <p>Making a chip is not carving or assembling. It is printing. A pattern is projected
@@ -128,7 +134,7 @@
     <p>The first time the cart reaches a stop it waits long enough for you to read that
       stop's explanation, between 10 and 22 seconds depending on how much there is to say,
       and a bar under the panel text shows how long is left. Once every stop has been
-      explained there is nothing new to read, so the park speeds up to a watchable pace. The guided first pass takes about eight minutes.
+      explained there is nothing new to read, so the park speeds up to a watchable pace. The guided first pass takes about nine minutes.
       <b>Space</b> holds any stop for as long as you like, <b>S</b> skips to the next one, and
       the speed slider scales everything, reading stops included.</p>
 
@@ -145,7 +151,8 @@
     <p>The order of the stages, and what each one physically does, is real: quartz sand,
       carbon reduction, the Siemens purification, Czochralski crystal growth, wire sawing,
       polishing, mask making, deposition, photoresist, exposure, develop and etch, ion
-      implantation, copper damascene wiring, wafer probe, dicing, packaging and final sort.
+      implantation, copper damascene wiring, wafer probe, dicing, packaging, final sort,
+      and the trays going out on a lorry to the machines that run on them.
       The numbers quoted are typical rather than exact, since they vary enormously between
       products. Scaled down for the sake of the ride: four laps instead of about sixty, one
       wafer instead of a lot moving in parallel, and a park you can walk across in a minute

@@ -9,6 +9,11 @@ at every stop: a heap of sand, then dark lumps of rough silicon, then white
 polysilicon, a silver crystal, a stack of raw wafers, a mirror-flat disc, a green
 coated disc, a patterned one, and finally a tray of finished chips.
 
+Two more stops follow the chips out of the gate. They are palletised onto a lorry at
+the loading dock and driven to the data centre on the east side of the park, where
+another hall of racks lights up with every delivery. Then the lorry drives back to
+the gate and the next wafer starts, so the tour runs as a loop.
+
 Pure static site. No build step, no dependencies, no network calls.
 
 ## Run it
@@ -43,13 +48,13 @@ Any stop in the guide's route list is clickable and the camera flies straight th
 It is built to be read, not raced. The first time the cart reaches a stop it waits
 between 10 and 22 seconds, scaled to the length of that stop's explanation, and a
 bar under the panel text shows how much of the stop is left. The guided first pass
-therefore takes about **eight minutes**.
+therefore takes about **nine minutes**.
 
 After every stop has been explained there is nothing new to read, so the park
 switches to a watchable pace and the repeated lithography laps fast-forward, since
 they are the same road with a different mask. **Reset** (⟲) replays the slow tour.
 
-## The twenty stops
+## The twenty two stops
 
 | Act | Stops |
 |---|---|
@@ -57,6 +62,7 @@ they are the same road with a different mask. **Reset** (⟲) replays the slow t
 | 2 · Drawing the plan | Design Lab · Mask Shop · Cleanroom Gate |
 | 3 · Printing the chip | Layer Tube · Spin Coater · The Printer · Etch Bay · Ion Gun · Wire Floor · The Loop Counter |
 | 4 · Chips out the gate | Test Bay · Dicing Saw · Packaging · Shipping Gate |
+| 5 · Delivered and put to work | Loading Dock · Data Centre |
 
 Act 3 is laid out as a ring, because that is what it is. Printing a chip means
 driving the same six buildings once per layer, about sixty times for a real chip.
@@ -79,7 +85,9 @@ js/main.js          camera, input, frame loop
 
 `Park.routes` holds the polylines the cart drives and `Park.stations` maps distances
 along them to stop IDs. `Tour` fires a stop when the cart reaches a station, which is
-where the cargo changes and the narration switches.
+where the cargo changes and the narration switches. The five routes run in order:
+`intake`, `loop` once per layer, `exit`, `deliver` out to the data centre, and `ret`
+back to the gate for the next wafer.
 
 ## Notes for editing
 
