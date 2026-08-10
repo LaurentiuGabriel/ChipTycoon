@@ -1,0 +1,20 @@
+name: Test
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the site
+        uses: actions/checkout@v4
+
+      - name: Check the JavaScript parses
+        run: find js -name '*.js' -exec node --check {} \;
+
+      - name: Test language switching
+        run: node tests/i18n.test.js

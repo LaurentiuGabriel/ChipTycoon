@@ -21,22 +21,29 @@
     </div>
   </div>
   <div class="top-actions">
-    <button id="btn-about" class="btn">About</button>
-    <button id="btn-panel" class="btn" aria-expanded="true">Hide guide</button>
+    <label class="language-picker" for="language-select">
+      <span class="language-label" data-i18n="language.label">Language</span>
+      <select id="language-select" data-i18n-aria-label="language.label" aria-label="Language">
+        <option value="en">English</option>
+        <option value="zh-CN">简体中文</option>
+      </select>
+    </label>
+    <button id="btn-about" class="btn" data-i18n="actions.about">About</button>
+    <button id="btn-panel" class="btn" aria-expanded="true" data-i18n="actions.hideGuide">Hide guide</button>
   </div>
 </header>
 
 <div class="hud" id="hud">
-  <div class="hud-item"><span class="k">Stops seen</span><span class="v" id="ui-hudStop">0 / 22</span></div>
-  <div class="hud-item"><span class="k">Layer</span><span class="v" id="ui-hudLayer">1 of 4</span></div>
-  <div class="hud-item"><span class="k">Wafer</span><span class="v" id="ui-hudBatch">#1</span></div>
+  <div class="hud-item"><span class="k" data-i18n="hud.stopsSeen">Stops seen</span><span class="v" id="ui-hudStop">0 / 22</span></div>
+  <div class="hud-item"><span class="k" data-i18n="hud.layer">Layer</span><span class="v" id="ui-hudLayer">1 of 4</span></div>
+  <div class="hud-item"><span class="k" data-i18n="hud.wafer">Wafer</span><span class="v" id="ui-hudBatch">#1</span></div>
   <div class="hud-note" id="ui-hudNote"></div>
 </div>
 
 <div class="zoomer">
-  <button id="zoom-in" title="Zoom in" aria-label="Zoom in">+</button>
-  <button id="zoom-out" title="Zoom out" aria-label="Zoom out">−</button>
-  <button id="zoom-fit" title="Show the whole park (or double-click)" aria-label="Fit the whole park">⤢</button>
+  <button id="zoom-in" title="Zoom in" aria-label="Zoom in" data-i18n-title="zoom.in" data-i18n-aria-label="zoom.in">+</button>
+  <button id="zoom-out" title="Zoom out" aria-label="Zoom out" data-i18n-title="zoom.out" data-i18n-aria-label="zoom.out">−</button>
+  <button id="zoom-fit" title="Show the whole park (or double-click)" aria-label="Fit the whole park" data-i18n-title="zoom.fitTitle" data-i18n-aria-label="zoom.fitLabel">⤢</button>
 </div>
 
 <aside class="guide" id="guide">
@@ -44,7 +51,7 @@
        everything below the handle collapses, so the park is never buried. -->
   <button class="sheet-handle" id="sheet-handle" aria-expanded="false" aria-controls="guide-more">
     <span class="grip" aria-hidden="true"></span>
-    <span class="sheet-label">Read more</span>
+    <span class="sheet-label" data-i18n="actions.readMore">Read more</span>
     <span class="sheet-caret" aria-hidden="true">▾</span>
   </button>
 
@@ -66,18 +73,18 @@
     <p class="tip" id="ui-tip"></p>
 
     <div class="pin-note" id="ui-pinNote" hidden>
-      Pinned to this stop.
-      <button id="btn-unpin" class="link">Follow the cart again</button>
+      <span data-i18n="guide.pinned">Pinned to this stop.</span>
+      <button id="btn-unpin" class="link" data-i18n="guide.followAgain">Follow the cart again</button>
     </div>
 
     <section class="sec">
-      <h3>The whole route <span class="hint">click any stop to ride there</span></h3>
+      <h3><span data-i18n="guide.wholeRoute">The whole route</span> <span class="hint" data-i18n="guide.routeHint">click any stop to ride there</span></h3>
       <div class="stop-list" id="ui-stopList"></div>
     </section>
 
     <section class="sec">
-      <h3>What you are watching</h3>
-      <p class="fine">The yellow cart carries one wafer, and the tag above it names whatever
+      <h3 data-i18n="guide.watchingTitle">What you are watching</h3>
+      <p class="fine" data-i18n="guide.watchingBody">The yellow cart carries one wafer, and the tag above it names whatever
         it is carrying right now. The cargo changes at every single stop: sand, rough silicon,
         white polysilicon, a silver crystal, a stack of slices, a mirror-flat disc, then a
         coloured layer that is coated, printed, etched, doped and wired. Each lap of the ring
@@ -94,28 +101,28 @@
   <div class="progress"><i id="ui-progressBar"></i></div>
   <div class="dock-row">
     <div class="group">
-      <button id="btn-play" class="icon" title="Play or pause (Space)"><span id="ui-playGlyph">❙❙</span></button>
-      <button id="btn-step" class="icon" title="Skip to the next stop (S)">⇥</button>
-      <button id="btn-restart" class="icon" title="Restart the guided tour (R)">⟲</button>
+      <button id="btn-play" class="icon" title="Play or pause (Space)" aria-label="Play or pause (Space)" data-i18n-title="controls.play" data-i18n-aria-label="controls.play"><span id="ui-playGlyph">❙❙</span></button>
+      <button id="btn-step" class="icon" title="Skip to the next stop (S)" aria-label="Skip to the next stop (S)" data-i18n-title="controls.step" data-i18n-aria-label="controls.step">⇥</button>
+      <button id="btn-restart" class="icon" title="Restart the guided tour (R)" aria-label="Restart the guided tour (R)" data-i18n-title="controls.restart" data-i18n-aria-label="controls.restart">⟲</button>
     </div>
 
     <label class="field slider">
-      <span>Speed <b id="v-speed">1.0×</b></span>
+      <span><span data-i18n="controls.speed">Speed</span> <b id="v-speed">1.0×</b></span>
       <input id="speed" type="range" min="0.4" max="6" step="0.1" value="1" />
     </label>
 
     <div class="group toggles">
-      <label class="toggle"><input id="follow" type="checkbox" checked /><span>Follow</span></label>
-      <label class="toggle"><input id="labels" type="checkbox" checked /><span>Signs</span></label>
+      <label class="toggle"><input id="follow" type="checkbox" checked /><span data-i18n="controls.follow">Follow</span></label>
+      <label class="toggle"><input id="labels" type="checkbox" checked /><span data-i18n="controls.signs">Signs</span></label>
     </div>
   </div>
 </footer>
 
 <div class="modal" id="about" hidden>
   <div class="modal-card">
-    <button class="modal-close" id="about-close" aria-label="Close">×</button>
-    <h2>What this is</h2>
-    <p>ChipTycoon is a working chip factory laid out as a theme park. A cart carries one
+    <button class="modal-close" id="about-close" aria-label="Close" data-i18n-aria-label="actions.close">×</button>
+    <h2 data-i18n="about.whatTitle">What this is</h2>
+    <p data-i18n="about.whatBody">ChipTycoon is a working chip factory laid out as a theme park. A cart carries one
       silicon wafer along the roads and stops at each of the twenty buildings that turn
       ordinary sand into a computer chip. The cargo on the cart is the wafer itself, and it
       visibly changes at every stop, so you can always see what stage the material is at.
@@ -123,32 +130,32 @@
       the loading dock and delivered to the data centre, where they are racked up and
       switched on. Then the lorry drives back and the whole thing runs again.</p>
 
-    <h2>Why the middle is a ring</h2>
-    <p>Making a chip is not carving or assembling. It is printing. A pattern is projected
+    <h2 data-i18n="about.ringTitle">Why the middle is a ring</h2>
+    <p data-i18n="about.ringBody">Making a chip is not carving or assembling. It is printing. A pattern is projected
       onto the wafer with light through a photo mask, carved into a solid layer, and then the whole thing happens
       again for the next layer up. A real chip is about sixty of those layers stacked on top
       of each other, which is why the cart drives the same six buildings round and round.
       The park shows four laps and then moves on, so you are not sat there for an hour.</p>
 
-    <h2>Pacing</h2>
-    <p>The first time the cart reaches a stop it waits long enough for you to read that
+    <h2 data-i18n="about.pacingTitle">Pacing</h2>
+    <p data-i18n-html="about.pacingBody">The first time the cart reaches a stop it waits long enough for you to read that
       stop's explanation, between 10 and 22 seconds depending on how much there is to say,
       and a bar under the panel text shows how long is left. Once every stop has been
       explained there is nothing new to read, so the park speeds up to a watchable pace. The guided first pass takes about nine minutes.
       <b>Space</b> holds any stop for as long as you like, <b>S</b> skips to the next one, and
       the speed slider scales everything, reading stops included.</p>
 
-    <h2>Controls</h2>
+    <h2 data-i18n="about.controlsTitle">Controls</h2>
     <ul>
-      <li><b>Space</b> play or pause · <b>S</b> next stop · <b>R</b> restart the tour ·
+      <li data-i18n-html="about.controlsKeyboard"><b>Space</b> play or pause · <b>S</b> next stop · <b>R</b> restart the tour ·
           <b>F</b> follow camera · <b>L</b> signs</li>
-      <li>Drag to pan, scroll to zoom, double-click to see the whole park.</li>
-      <li>Click any building for its explanation, or pick a stop from the list in the guide
+      <li data-i18n="about.controlsPointer">Drag to pan, scroll to zoom, double-click to see the whole park.</li>
+      <li data-i18n="about.controlsStops">Click any building for its explanation, or pick a stop from the list in the guide
           to ride straight there.</li>
     </ul>
 
-    <h2>How accurate is it</h2>
-    <p>The order of the stages, and what each one physically does, is real: quartz sand,
+    <h2 data-i18n="about.accuracyTitle">How accurate is it</h2>
+    <p data-i18n="about.accuracyBody">The order of the stages, and what each one physically does, is real: quartz sand,
       carbon reduction, the Siemens purification, Czochralski crystal growth, wire sawing,
       polishing, mask making, deposition, photoresist, exposure, develop and etch, ion
       implantation, copper damascene wiring, wafer probe, dicing, packaging, final sort,
@@ -157,11 +164,13 @@
       products. Scaled down for the sake of the ride: four laps instead of about sixty, one
       wafer instead of a lot moving in parallel, and a park you can walk across in a minute
       instead of a building the size of several football pitches.</p>
-    <p class="fine">No build step, no dependencies, no network calls. Every shape on screen
+    <p class="fine" data-i18n="about.technical">No build step, no dependencies, no network calls. Every shape on screen
       is drawn from plain polygons in a canvas.</p>
   </div>
 </div>
 
+<script src="js/i18n.js"></script>
+<script src="js/locales/zh-CN.js"></script>
 <script src="js/iso.js"></script>
 <script src="js/park.js"></script>
 <script src="js/tour.js"></script>

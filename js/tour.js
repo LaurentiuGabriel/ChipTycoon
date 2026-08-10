@@ -254,6 +254,25 @@
     state.fastForward = false;
   }
 
+  /* Keep the viewer at the same point in the reading pause when the language
+     changes, while adopting the newly calculated duration for that locale. */
+  function refreshReadingTime() {
+    if (state.stepMode || cart.dwell <= 0 || !state.reading || !state.stage || state.dwellTotal <= 0) return;
+    var current = null;
+    Object.keys(Park.stations).some(function (route) {
+      return Park.stations[route].some(function (station) {
+        if (station.id !== state.stage) return false;
+        current = station;
+        return true;
+      });
+    });
+    if (!current || !current.read) return;
+    var progress = Math.max(0, Math.min(1, 1 - state.dwellLeft / state.dwellTotal));
+    cart.dwell = current.read * (1 - progress);
+    state.dwellTotal = current.read;
+    state.dwellLeft = cart.dwell;
+  }
+
   global.Tour = {
     state: state,
     cart: cart,
@@ -262,6 +281,7 @@
     cartPosition: cartPosition,
     progress: progress,
     jumpTo: jumpTo,
+    refreshReadingTime: refreshReadingTime,
     reset: reset,
     on: function (fn) { listeners.push(fn); },
     play: function () { state.paused = false; state.running = true; },
@@ -271,7 +291,10 @@
       state.running = true;
       state.stepMode = true;
       state.paused = false;
-      if (cart.dwell > 0) cart.dwell = 0;
+      cart.dwell = 0;
+      state.reading = false;
+      state.dwellLeft = 0;
+      state.dwellTotal = 0;
     }
   };
 })(window);

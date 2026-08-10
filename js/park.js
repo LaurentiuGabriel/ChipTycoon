@@ -4,7 +4,7 @@
 (function (global) {
   'use strict';
 
-  var Iso = global.Iso;
+  var Iso = global.Iso, I18n = global.I18n;
 
   /* ---- routes ------------------------------------------------------------ */
 
@@ -286,16 +286,24 @@
   var STOP_BY_ID = {};
   STOPS.forEach(function (s) { STOP_BY_ID[s.id] = s; });
 
-  /* Reading stops are scaled to how much there is to read. */
+  /* Reading stops are scaled to how much there is to read. Han characters are
+     converted to word-like units so Chinese copy does not fall to the minimum
+     simply because it does not use spaces between words. */
   function readSeconds(id) {
     var s = STOP_BY_ID[id];
     if (!s) return 8;
-    var words = (s.short + ' ' + s.body + ' ' + s.tip).split(/\s+/).length;
-    return Math.min(22, Math.max(10, words / 4.4 + 3));
+    var text = s.short + ' ' + s.body + ' ' + s.tip;
+    var han = text.match(/[\u3400-\u9fff]/g) || [];
+    var words = text.replace(/[\u3400-\u9fff]/g, ' ').match(/[A-Za-z0-9]+(?:['’][A-Za-z0-9]+)*/g) || [];
+    var readingUnits = words.length + han.length / 1.6;
+    return Math.min(22, Math.max(10, readingUnits / 4.4 + 3));
   }
-  Object.keys(STATIONS).forEach(function (r) {
-    STATIONS[r].forEach(function (st) { st.read = readSeconds(st.id); });
-  });
+  function updateReadingTimes() {
+    Object.keys(STATIONS).forEach(function (r) {
+      STATIONS[r].forEach(function (st) { st.read = readSeconds(st.id); });
+    });
+  }
+  updateReadingTimes();
 
   /* ---- ground ------------------------------------------------------------ */
 
@@ -684,9 +692,10 @@
     ctx.strokeStyle = C.gold; ctx.lineWidth = 2;
     ctx.strokeRect(p.x - 30, p.y - 26, 60, 26);
     ctx.fillStyle = C.gold;
-    ctx.font = 'bold 15px "Trebuchet MS", Verdana, sans-serif';
+    ctx.font = 'bold 15px "Trebuchet MS", "PingFang SC", "Microsoft YaHei", sans-serif';
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText('LAYER ' + ((W && W.lap) || 1), p.x, p.y - 13);
+    var layer = (W && W.lap) || 1;
+    ctx.fillText(I18n ? I18n.t('canvas.layer', { count: layer }) : 'LAYER ' + layer, p.x, p.y - 13);
     ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
   }});
 
@@ -813,7 +822,10 @@
 
     /* Kept to one short word: the board is drawn at a fixed size in screen space,
        so a long one would swamp the wall once the camera pulls back. */
-    sign(ctx, X + 7.7, face, H - 0.1, full > 0 ? 'ONLINE' : 'IDLE',
+    var status = full > 0
+      ? (I18n ? I18n.t('canvas.online') : 'ONLINE')
+      : (I18n ? I18n.t('canvas.idle') : 'IDLE');
+    sign(ctx, X + 7.7, face, H - 0.1, status,
          full > 0 ? '#4fe0b8' : '#6b7784');
   }});
 
@@ -842,7 +854,7 @@
 
   function sign(ctx, x, yFace, z, text, colour) {
     var p = Iso.project(x, yFace, z);
-    ctx.font = 'bold 13px "Trebuchet MS", Verdana, sans-serif';
+    ctx.font = 'bold 13px "Trebuchet MS", "PingFang SC", "Microsoft YaHei", sans-serif';
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     var w = ctx.measureText(text).width + 16;
     ctx.fillStyle = '#22303f';
@@ -1033,6 +1045,7 @@
   global.Park = {
     C: C, BOUNDS: BOUNDS, GROUND: GROUND, LOTS: LOTS,
     cargoLabels: CARGO_LABELS, loopCargo: LOOP_CARGO,
+    updateReadingTimes: updateReadingTimes,
     routes: ROUTES, stations: STATIONS,
     stops: STOPS, stopById: STOP_BY_ID,
     buildings: B,

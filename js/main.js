@@ -15,7 +15,9 @@
   var pinch = null;
   var viewW = 0, viewH = 0;
 
+  global.I18n.init(Park);
   UI.init();
+  global.I18n.onChange(function () { hideTip(); });
 
   /* ---- layout ------------------------------------------------------------ */
 
@@ -214,7 +216,11 @@
 
   function showTip(x, y, s) {
     tooltip.hidden = false;
-    tooltip.innerHTML = '<b>' + s.name + '</b>' + s.short;
+    tooltip.innerHTML = '';
+    var name = document.createElement('b');
+    name.textContent = s.name;
+    tooltip.appendChild(name);
+    tooltip.appendChild(document.createTextNode(s.short));
     var r = tooltip.getBoundingClientRect();
     tooltip.style.left = Math.min(x + 14, viewW - r.width - 12) + 'px';
     tooltip.style.top = Math.min(y + 14, viewH - r.height - 12) + 'px';
@@ -232,7 +238,7 @@
   function setFollow(v) { follow = v; followBox.checked = v; }
 
   document.addEventListener('keydown', function (e) {
-    if (e.target.tagName === 'INPUT') return;
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
     switch (e.key.toLowerCase()) {
       case ' ': e.preventDefault(); Tour.toggle(); UI.paint(true); break;
       case 's': Tour.step(); break;

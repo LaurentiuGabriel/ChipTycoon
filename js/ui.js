@@ -2,7 +2,8 @@
 (function (global) {
   'use strict';
 
-  var Park = global.Park, Tour = global.Tour, Renderer = global.Renderer;
+  var Park = global.Park, Tour = global.Tour, Renderer = global.Renderer,
+      I18n = global.I18n;
 
   var el = {};
   var pinned = null;          // a stop the viewer clicked, held until they clear it
@@ -46,7 +47,7 @@
       var open = !g.classList.contains('open');
       g.classList.toggle('open', open);
       sheet.setAttribute('aria-expanded', String(open));
-      sheet.querySelector('.sheet-label').textContent = open ? 'Show less' : 'Read more';
+      sheet.querySelector('.sheet-label').textContent = I18n.t(open ? 'actions.showLess' : 'actions.readMore');
       if (open) g.scrollTop = 0;
     });
 
@@ -55,13 +56,24 @@
       var p = $('guide');
       var hide = !p.classList.contains('hidden');
       p.classList.toggle('hidden', hide);
-      pbtn.textContent = hide ? 'Show guide' : 'Hide guide';
+      pbtn.textContent = I18n.t(hide ? 'actions.showGuide' : 'actions.hideGuide');
       pbtn.setAttribute('aria-expanded', String(!hide));
     });
 
     Tour.on(function (name, id) {
       if (name === 'stage' && !pinned) showStop(Park.stopById[id], false);
       if (name === 'reset') { pinned = null; lastPainted = null; }
+    });
+
+    I18n.onChange(function () {
+      Tour.refreshReadingTime();
+      buildStopList();
+      var visible = pinned || Park.stopById[Tour.state.stage] || Park.stopById[lastPainted] || Park.stops[0];
+      lastPainted = null;
+      render(visible);
+      el.pinNote.hidden = !pinned;
+      syncChromeLabels();
+      paint(true);
     });
   }
 
@@ -72,7 +84,10 @@
       var b = document.createElement('button');
       b.className = 'stop-chip act' + s.act;
       b.dataset.id = s.id;
-      b.innerHTML = '<i>' + (i + 1) + '</i>' + s.name;
+      var number = document.createElement('i');
+      number.textContent = i + 1;
+      b.appendChild(number);
+      b.appendChild(document.createTextNode(s.name));
       b.addEventListener('click', function () {
         pinned = null;
         Tour.jumpTo(s.id);
@@ -90,7 +105,19 @@
     if (!g || !h || !h.offsetParent) return;
     g.classList.remove('open');
     h.setAttribute('aria-expanded', 'false');
-    h.querySelector('.sheet-label').textContent = 'Read more';
+    h.querySelector('.sheet-label').textContent = I18n.t('actions.readMore');
+  }
+
+  function syncChromeLabels() {
+    var guide = $('guide');
+    var sheet = $('sheet-handle');
+    var panelButton = $('btn-panel');
+    sheet.querySelector('.sheet-label').textContent = I18n.t(
+      guide.classList.contains('open') ? 'actions.showLess' : 'actions.readMore'
+    );
+    panelButton.textContent = I18n.t(
+      guide.classList.contains('hidden') ? 'actions.showGuide' : 'actions.hideGuide'
+    );
   }
 
   function showStop(stop, isPin) {
@@ -100,21 +127,21 @@
     el.pinNote.hidden = !isPin;
   }
 
-  var ACT_NAME = { 1: 'Act 1 · Sand to wafer', 2: 'Act 2 · Drawing the plan',
-                   3: 'Act 3 · Printing the chip', 4: 'Act 4 · Chips out the gate',
-                   5: 'Act 5 · Delivered and put to work' };
-
   function render(stop) {
     if (lastPainted === stop.id && !pinned) return;
     lastPainted = stop.id;
     var n = Park.stops.indexOf(stop) + 1;
-    el.chip.textContent = 'Stop ' + n + ' of ' + Park.stops.length;
+    el.chip.textContent = I18n.t('guide.stopCounter', { current: n, total: Park.stops.length });
     el.chip.className = 'chip act' + stop.act;
     el.name.textContent = stop.name;
     el.short.textContent = stop.short;
     el.body.textContent = stop.body;
-    el.tip.innerHTML = '<b>Tycoon tip:</b> ' + stop.tip;
-    el.hudNote.textContent = ACT_NAME[stop.act] || '';
+    el.tip.innerHTML = '';
+    var tipLabel = document.createElement('b');
+    tipLabel.textContent = I18n.t('guide.tipLabel');
+    el.tip.appendChild(tipLabel);
+    el.tip.appendChild(document.createTextNode(stop.tip));
+    el.hudNote.textContent = I18n.t('act.' + stop.act);
 
     var chips = el.stopList.children;
     for (var i = 0; i < chips.length; i++) {
@@ -149,16 +176,16 @@
     el.dwell.hidden = !(s.dwellTotal > 0 && s.dwellLeft > 0);
     el.dwellBar.style.width = (pct * 100).toFixed(1) + '%';
     el.dwellHint.textContent = s.reading
-      ? 'reading stop · press Space to hold it here'
-      : 'moving on';
+      ? I18n.t('guide.reading')
+      : I18n.t('guide.movingOn');
 
     el.hudStop.textContent = s.seenCount + ' / ' + Park.stops.length;
-    el.hudLayer.textContent = s.lap + ' of ' + s.laps + ' shown';
+    el.hudLayer.textContent = I18n.t('status.layer', { current: s.lap, total: s.laps });
     el.hudBatch.textContent = '#' + s.batch;
     el.progressBar.style.width = (Tour.progress() * 100).toFixed(1) + '%';
 
     if (s.tourDone && !s.reading) {
-      el.hudNote.textContent = 'Every stop explained · running at watching speed';
+      el.hudNote.textContent = I18n.t('status.complete');
     }
   }
 
