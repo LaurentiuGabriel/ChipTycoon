@@ -29,7 +29,10 @@ jobs:
       # The site is plain files, but a syntax error in the drawing engine would
       # publish a page full of empty boxes, so fail the deploy instead.
       - name: Check the JavaScript parses
-        run: for f in js/*.js; do node --check "$f"; done
+        run: find js -name '*.js' -exec node --check {} \;
+
+      - name: Test language switching
+        run: node tests/i18n.test.js
 
       - name: Configure Pages
         uses: actions/configure-pages@v5

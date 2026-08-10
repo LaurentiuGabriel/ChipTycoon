@@ -26,7 +26,7 @@
 
 html, body {
   margin: 0; height: 100%; overflow: hidden;
-  font-family: "Trebuchet MS", "Segoe UI", Verdana, sans-serif;
+  font-family: "Trebuchet MS", "Segoe UI", "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", Verdana, sans-serif;
   color: var(--ink);
   background: #3f6b2c;
   -webkit-text-size-adjust: 100%;
@@ -96,7 +96,22 @@ html, body {
   text-shadow: 1px 1px 0 #2b2016;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.top-actions { display: flex; gap: 8px; flex: none; }
+.top-actions { display: flex; align-items: center; gap: 8px; flex: none; }
+.language-picker {
+  display: flex; align-items: center; gap: 6px;
+  color: #fff; font-size: 12px; font-weight: bold;
+  text-shadow: 1px 1px 0 #2b2016;
+}
+.language-picker select {
+  min-width: 92px; padding: 6px 24px 6px 8px;
+  font: inherit; font-size: 13px; font-weight: bold; color: var(--ink);
+  text-shadow: none;
+  background: var(--panel);
+  border: 2px solid var(--wood-dark); border-radius: 4px;
+  box-shadow: inset 1px 1px 0 #fff8e4, inset -2px -2px 0 var(--panel-dark), 2px 2px 0 var(--shadow);
+  cursor: pointer;
+}
+.language-picker select:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
 
 /* ---------- HUD ---------- */
 
@@ -380,13 +395,29 @@ input[type="range"] { width: 100%; accent-color: var(--green); }
   .toggle { font-size: 12px; }
 }
 
+@media (max-width: 560px) {
+  .language-label { display: none; }
+}
+
 @media (max-width: 430px) {
+  .topbar { gap: 6px; padding-left: 8px; padding-right: 8px; }
+  .top-actions { gap: 4px; }
+  .top-actions .btn { padding: 4px 7px; font-size: 12px; }
+  .language-label { display: none; }
+  .language-picker select {
+    min-width: 0; width: 92px; padding: 4px 18px 4px 5px; font-size: 12px;
+  }
   .guide { max-height: 34vh; }
   .guide.open { max-height: 58vh; }
   .guide h2 { font-size: 18px; }
   .lede { font-size: 13.5px; }
   .hud-item:nth-child(3) { display: none; }   /* wafer number is the least useful */
   .toggles { width: 100%; justify-content: space-between; }
+}
+
+@media (max-width: 380px) {
+  .brand-text { display: none; }
+  .brand { gap: 0; }
 }
 
 /* Short and wide, which is any phone held sideways. A bottom sheet would eat

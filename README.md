@@ -27,6 +27,12 @@ python -m http.server 8000
 # → http://localhost:8000
 ```
 
+## Languages
+
+Use the selector in the top bar to switch between English and Simplified Chinese.
+The choice is remembered locally. Switching languages updates the guide, controls,
+canvas signs and cargo labels in place without restarting the tour.
+
 ## Controls
 
 | | |
@@ -42,6 +48,13 @@ python -m http.server 8000
 
 The view starts riding along with the cart, since that is where everything happens.
 Any stop in the guide's route list is clickable and the camera flies straight there.
+
+## Test it
+
+```
+find js -name '*.js' -exec node --check {} \;
+node tests/i18n.test.js
+```
 
 ## Pacing
 
@@ -76,6 +89,8 @@ layer you are on.
 index.html          markup, controls, about copy
 css/styles.css      the tycoon chrome: bevels, wooden borders, gold signage
 js/iso.js           isometric projection + box / prism / cylinder / cone primitives
+js/i18n.js          locale selection, DOM updates and English fallback copy
+js/locales/         additional locale dictionaries
 js/park.js          routes, stops, lots, one painter per building, scenery
 js/tour.js          the state machine that walks the wafer through the park
 js/render.js        canvas painter's-algorithm renderer

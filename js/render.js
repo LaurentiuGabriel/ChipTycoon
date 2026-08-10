@@ -4,7 +4,7 @@
 (function (global) {
   'use strict';
 
-  var Iso = global.Iso, Park = global.Park, Tour = global.Tour;
+  var Iso = global.Iso, Park = global.Park, Tour = global.Tour, I18n = global.I18n;
   var C = Park.C;
 
   var showLabels = true;
@@ -392,14 +392,18 @@
   function drawCartTag(ctx, cam, p, s) {
     var text = Park.cargoLabels[s.cargo];
     if (!text || cam.scale < 0.35) return;
-    if (Park.loopCargo[s.cargo] && s.layers > 0) text += ' · layer ' + s.layers;
+    if (Park.loopCargo[s.cargo] && s.layers > 0) {
+      text = I18n
+        ? I18n.t('canvas.cargoLayer', { cargo: text, count: s.layers })
+        : text + ' · layer ' + s.layers;
+    }
 
     var w = Iso.project(p.x, p.y, p.z + 1.9);
     var sx = w.x * cam.scale + cam.ox;
     var sy = w.y * cam.scale + cam.oy;
 
     ctx.save();
-    ctx.font = 'bold 12.5px "Trebuchet MS", Verdana, sans-serif';
+    ctx.font = 'bold 12.5px "Trebuchet MS", "PingFang SC", "Microsoft YaHei", sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     var tw = ctx.measureText(text).width + 20;
@@ -494,7 +498,7 @@
   function drawLabels(ctx, cam, activeId) {
     if (cam.scale < 0.45) return;
     ctx.save();
-    ctx.font = 'bold 12px "Trebuchet MS", Verdana, sans-serif';
+    ctx.font = 'bold 12px "Trebuchet MS", "PingFang SC", "Microsoft YaHei", sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
